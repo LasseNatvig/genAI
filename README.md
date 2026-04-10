@@ -11,3 +11,7 @@
     * (1) Write python program with compact code that generates a list of n tuples, where each tuple contains a character c, a textstring ts, and an integer r that is the number of occurances of the character c in the textstring ts. Use only printable ASCII characters in the textsting. The list should be written to a .txt file
     * (2) modify the code to avoid newline and other special characters, let max text string lenght be 40 chars
     * (3) Justert prompt: modify the code to avoid newline and other special characters, let max text string lenght be 40 chars
+
+    sk-PIUN_yffOsHbgwuvbCCO5g
+
+    
