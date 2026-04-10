@@ -13,5 +13,3 @@
     * (3) Justert prompt: modify the code to avoid newline and other special characters, let max text string lenght be 40 chars
 
     sk-PIUN_yffOsHbgwuvbCCO5g
-
-    
