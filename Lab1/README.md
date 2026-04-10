@@ -16,5 +16,4 @@
   * Attempt on **RPi4Legacy32** at IDI
     * 10.64.140.50
     * Seems OK with debugger, but not memory inspect like in picture, **wait with that**
-  * **TODO** has many updates!  
 
