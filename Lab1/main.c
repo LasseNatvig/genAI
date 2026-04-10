@@ -7,7 +7,7 @@ char text[] = "Hello from C!";
 
 int main(void)
 {
-    char *s = &text;
+    char *s = text;
     int value1 = 6;  
     int value2 = -7;  
     int result = multiply_repeated_addition(&value1, &value2);
