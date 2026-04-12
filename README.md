@@ -11,3 +11,8 @@
     * (1) Write python program with compact code that generates a list of n tuples, where each tuple contains a character c, a textstring ts, and an integer r that is the number of occurances of the character c in the textstring ts. Use only printable ASCII characters in the textsting. The list should be written to a .txt file
     * (2) modify the code to avoid newline and other special characters, let max text string lenght be 40 chars
     * (3) Justert prompt: modify the code to avoid newline and other special characters, let max text string lenght be 40 chars
+
+## gridgame
+
+* Ren test av plan-mode; make a plan for developing a small game in python. The game should display a 8 x 8 mesh of squares, where each square is 10 x 10 pixels. At the start the 64 squares should be blue, except one corner that is red. The player should use arrow keys to move the red square over the blue squares so that they get white, until all are white
+
