@@ -17,7 +17,7 @@ class DebugSnakeGame:
         self.sense.clear()
 
         # Debug settings
-        self.debug_mode = True
+        self.debug_mode = False
         self.debug_messages = []
 
         # Game settings
