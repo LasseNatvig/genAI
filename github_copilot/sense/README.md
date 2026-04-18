@@ -8,4 +8,3 @@
 * copilot discussed with itself, and suggested checking: cat /sys/class/graphics/fb0/name
   * with that change, it works. Made a safe copy
 * **TODO** try the same with cline at IDI
- 
