@@ -2,10 +2,9 @@
 
 ## poe assistant on RPi4 2026-04-18
 
-### Share Link:
+### Share Link
 
 https://poe.com/s/2e2nYJiBk3IdGmnaIDF6
-
 
 ### Prompt
 
