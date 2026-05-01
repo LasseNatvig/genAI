@@ -15,6 +15,8 @@ static void SDLCALL audio_get_callback(void *userdata,
     AudioState *a = (AudioState *)userdata;
     (void)total_amount;
 
+
+
     if (additional_amount <= 0) return;
 
     int    num_frames = additional_amount / (int)(sizeof(float) * CHANNELS);
@@ -49,7 +51,7 @@ bool Audio_Init(AudioState *a)
         audio_get_callback, a);
 
     if (!a->stream) {
-        SDL_Log("SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
+        SDL_Log("[audio] SDL_OpenAudioDeviceStream failed: %s", SDL_GetError());
         return false;
     }
 
@@ -61,12 +63,11 @@ void Audio_Toggle(AudioState *a)
 {
     if (!a->stream) return;
 
-    SDL_AudioDeviceID dev = SDL_GetAudioStreamDevice(a->stream);
     if (a->playing) {
-        SDL_PauseAudioDevice(dev);
+        SDL_PauseAudioStreamDevice(a->stream);
         a->playing = false;
     } else {
-        SDL_ResumeAudioDevice(dev);
+        SDL_ResumeAudioStreamDevice(a->stream);
         a->playing = true;
     }
 }

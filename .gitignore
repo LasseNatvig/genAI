@@ -24,3 +24,4 @@ github_copilot/winT14s/SDL3 install/SDL3/.git-hash
 github_copilot/winT14s/SDL3 install/SDL3/.gitignore
 github_copilot/winT14s/SDL3 install/bin/debug/audio.obj
 .gitignore
+github_copilot/winT14s/SDL3 install/.vscode/launch.json
