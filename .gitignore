@@ -3,3 +3,24 @@ github_copilot/hello
 genAI3-2025-cline/test/screenshot.png
 poe_assistant/.vscode/launch.json
 poe_assistant/.vscode/tasks.json
+github_copilot/winT14s/SDL3 install/SDL3/INSTALL.md
+github_copilot/winT14s/SDL3 install/SDL3/LICENSE.txt
+github_copilot/winT14s/SDL3 install/tests/test_sprite.obj
+github_copilot/winT14s/SDL3 install/tests/test_sprite.exe
+github_copilot/winT14s/SDL3 install/bin/debug/demo.exe
+github_copilot/winT14s/SDL3 install/tests/test_audio.exe
+github_copilot/winT14s/SDL3 install/tests/test_audio.obj
+github_copilot/winT14s/SDL3 install/SDL3/lib/x64/SDL3.lib
+github_copilot/winT14s/SDL3 install/SDL3/lib/x64/SDL3_test.lib
+github_copilot/winT14s/SDL3 install/SDL3/cmake/sdlcpu.cmake
+github_copilot/winT14s/SDL3 install/SDL3/cmake/SDL3ConfigVersion.cmake
+github_copilot/winT14s/SDL3 install/SDL3/cmake/SDL3Config.cmake
+github_copilot/winT14s/SDL3 install/bin/debug/sprite.obj
+github_copilot/winT14s/SDL3 install/bin/debug/SDL3.dll
+github_copilot/winT14s/SDL3 install/bin/debug/main.obj
+github_copilot/winT14s/SDL3 install/bin/debug/demo.pdb
+github_copilot/winT14s/SDL3 install/bin/debug/demo.ilk
+github_copilot/winT14s/SDL3 install/SDL3/.git-hash
+github_copilot/winT14s/SDL3 install/SDL3/.gitignore
+github_copilot/winT14s/SDL3 install/bin/debug/audio.obj
+.gitignore
