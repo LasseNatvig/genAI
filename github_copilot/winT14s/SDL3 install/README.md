@@ -1,4 +1,4 @@
-# SDL3 Demo — Windows / MSVC
+nmak# SDL3 Demo — Windows / MSVC
 
 A C demo showcasing SDL3 features: 2D rendering, bouncing sprite with delta-time physics, keyboard & mouse input, and 440 Hz sine-wave audio.
 
