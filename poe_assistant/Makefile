@@ -1,20 +1,15 @@
 CC      = gcc
 CFLAGS  = -g -O0 -Wall -Wextra
-TARGET  = sense
-SRC     = sense.c
+TARGET  = sensehat
+SRC     = sensehat_i2c_ids.c
 
-.PHONY: all clean test-keys test-led
+.PHONY: all clean test-keys sensehat 
 
 all: $(TARGET)
 
 $(TARGET): $(SRC)
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 
-test-keys: $(TARGET)
-	./$(TARGET) --test-keys
-
-test-led: $(TARGET)
-	./$(TARGET) --test-led
 
 clean:
 	rm -f $(TARGET)
