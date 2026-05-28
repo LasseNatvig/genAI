@@ -6,8 +6,6 @@ read the temp_id value every 10th second for 5 minutes, and print the average te
 
 gave new code
 
-[REDACTED-ROTATED-KEY]
-
 Install sshuttle tool on Raspberry. It is kind of proxy/VPN over ssh.
 
 # For students
