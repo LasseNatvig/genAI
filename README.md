@@ -15,4 +15,3 @@
 ## gridgame
 
 * Ren test av plan-mode; make a plan for developing a small game in python. The game should display a 8 x 8 mesh of squares, where each square is 10 x 10 pixels. At the start the 64 squares should be blue, except one corner that is red. The player should use arrow keys to move the red square over the blue squares so that they get white, until all are white
-
