@@ -1,8 +1,8 @@
-# TDT4258 - 2026 - RPi4-1-setup Makefile 
+# TDT4258 - 2026 - genAI-1 Makefile 
 ###################################################################
 CC=gcc
 CFLAGS_DEBUG = -std=c11 -g -Wa,--noexecstack
-SOURCES = main.c assembler.s 
+SOURCES = main.c assembler.s
 
 # Builds debug version
 test: $(SOURCES)
