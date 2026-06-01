@@ -8,7 +8,6 @@ asmAdd:
 // Subtraction routine for armV7
 // Input: R0 = minuend, R1 = subtrahend
 // Output: R0 = result (minuend - subtrahend)
-
 .global asmSub
 asmSub:
     // Perform subtraction: R0 = R0 - R1

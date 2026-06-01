@@ -10,7 +10,7 @@ Be sure to open vsCode with this folder as the current folder. Typing "make" in 
 
 ## Suggested genAI session
 
-* Make a copy of the entire folder from the RPi4-1-setup example. Check that it works as intended. (Remove the asmroutine (exam-question) part of the code
+* Make a copy of the entire folder from the RPi4-1-setup example. Check that it works as intended. (Remove the asmroutine (exam-question) part of the code)
 * open cline in vsCode
   * enter in the cline chat-window: "extend the program in this folder with an armV7 assembler routine demonstrating subtraction, and test it from the main program", click act and the arrow (send-icon)
   * read output from cline, and check the suggested code change for the assembler file, and the c-file, click save if you find it OK
@@ -23,5 +23,4 @@ Be sure to open vsCode with this folder as the current folder. Typing "make" in 
 
   The result of one such session (using mistralai/Destral-Small-2-24B) will be posted at TDT4258 course web (canvas)
 
-  Questions and comments can be e-mailed to course lecturer Lasse.   
-  
+  Questions and comments can be e-mailed to course lecturer Lasse.
