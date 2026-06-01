@@ -8,7 +8,7 @@ We assume you have a folder with the RPi4-1-setup code example for Raspberry Pi 
 
 Be sure to open vsCode with this folder as the current folder. Typing "make" in the terminal will compile the program. It can be run by typing "./test" in the terminal, og debugged by pressing F5 in the source code.
 
-## Suggested genAI session
+## Suggested genAI session (This text is now in CANVAS)
 
 * Make a copy of the entire folder from the RPi4-1-setup example. Check that it works as intended. (Remove the asmroutine (exam-question) part of the code)
 * open cline in vsCode
