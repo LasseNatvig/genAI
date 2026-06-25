@@ -11,7 +11,3 @@ Experiment with RPi4 vsCode cline mistral-medium June 24th 2026. Continued June 
 ## technical experience
 
 * hang/stopped --- closed vsCode and restarted, could continue.
-* indication that cline uses claude-dev? it stores a focus-chain document
-  * in lasse@RPi4-32BitLegacyApril26:~/.config/Code/User/globalStorage/saoudrizwan.claude-dev ...
-  * **TODO** ask pavlo about it?
-  * 
