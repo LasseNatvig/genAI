@@ -12,60 +12,179 @@ def run_benchmark():
         print(f"Error running benchmark: {result.stderr}")
         return None
 
-    # Parse output: size seq_time rand_time
+    # Parse output: size seq_time rand_time (skip non-numeric lines)
     data = []
     for line in result.stdout.strip().split('\n'):
-        if line:
+        if line and not line.startswith('size of int'):
             parts = line.split()
             if len(parts) == 3:
                 data.append((int(parts[0]), float(parts[1]), float(parts[2])))
 
     return np.array(data)
 
-def plot_results():
-    """Generate and save the performance plot"""
+def load_data():
+    """Load data from file or run benchmark"""
     if not os.path.exists('results.txt'):
         # Run benchmark and save results
         result = subprocess.run(["./cache_demo"], capture_output=True, text=True)
         with open('results.txt', 'w') as f:
             f.write(result.stdout)
 
-    # Load data from file
-    data = np.loadtxt('results.txt')
+    # Load data from file - skip any non-numeric lines (like "size of int 4")
+    data = []
+    with open('results.txt', 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('size of int'):
+                try:
+                    parts = line.split()
+                    if len(parts) == 3:
+                        data.append((float(parts[0]), float(parts[1]), float(parts[2])))
+                except ValueError:
+                    continue
+
+    data = np.array(data)
     sizes = data[:, 0] / 1024  # Convert to KB
     seq_times = data[:, 1]
     rand_times = data[:, 2]
+    return sizes, seq_times, rand_times
 
+def create_plot_1_x_log_only(sizes, seq_times, rand_times):
+    """Plot with only x-axis as log scale"""
     plt.figure(figsize=(10, 6))
 
-    # Plot sequential access with lines and markers
+    # Plot sequential access
     plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
     plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
-    # Plot random access with lines and markers
+    # Plot random access
     plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
     plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
-    # Use logarithmic scale on x-axis and y-axis
+    # Only x-axis log scale
     plt.xscale('log', base=2)
-    plt.yscale('log')
 
-    # Add cache boundary lines for Raspberry Pi4B
+    # Add cache boundary lines
     plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
     plt.axvline(x=1024, color='green', linestyle='--', linewidth=1.5, label='L2 Cache (~1MB)')
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
-    plt.title('Cache Performance: Sequential vs Random Access (Raspberry Pi4B)', fontsize=14)
+    plt.title('Cache Performance: Sequential vs Random Access (X-axis Log Scale) - N=5 Averaged', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3, which="both", axis="both")
     plt.tight_layout()
 
-    plt.savefig('cache_performance.png', dpi=150, bbox_inches='tight')
-    print(f"Plot saved to cache_performance.png")
+    plt.savefig('cache_performance_x_log.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 1 saved to cache_performance_x_log.png")
 
-    # also show the plot
-    plt.show()
+def create_plot_2_both_log(sizes, seq_times, rand_times):
+    """Plot with both x and y log scale"""
+    plt.figure(figsize=(10, 6))
+
+    # Plot sequential access
+    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # Plot random access
+    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # Both axes log scale
+    plt.xscale('log', base=2)
+    plt.yscale('log')
+
+    # Add cache boundary lines
+    plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
+    plt.axvline(x=1024, color='green', linestyle='--', linewidth=1.5, label='L2 Cache (~1MB)')
+
+    plt.xlabel('Array Size (KB)', fontsize=12)
+    plt.ylabel('Time (seconds)', fontsize=12)
+    plt.title('Cache Performance: Sequential vs Random Access (Both Axes Log Scale) - N=5 Averaged', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3, which="both", axis="both")
+    plt.tight_layout()
+
+    plt.savefig('cache_performance_both_log.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 2 saved to cache_performance_both_log.png")
+
+def create_plot_3_l1_border(sizes, seq_times, rand_times):
+    """Focus on L1 cache border (32KB) without log scales"""
+    plt.figure(figsize=(10, 6))
+
+    # Plot sequential access
+    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # Plot random access
+    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # No log scales
+    plt.xscale('linear')
+    plt.yscale('linear')
+
+    # Focus on L1 cache border region (16KB to 64KB)
+    plt.xlim(16, 64)
+    plt.ylim(0, 0.01)  # Zoom y-axis to use full plot area
+
+    # Add L1 cache boundary line
+    plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
+
+    plt.xlabel('Array Size (KB)', fontsize=12)
+    plt.ylabel('Time (seconds)', fontsize=12)
+    plt.title('Cache Performance Focus: L1 Cache Border (~32KB) - N=5 Averaged', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3, which="both", axis="both")
+    plt.tight_layout()
+
+    plt.savefig('cache_performance_l1_focus.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 3 saved to cache_performance_l1_focus.png")
+
+def create_plot_4_l2_border(sizes, seq_times, rand_times):
+    """Focus on L2 cache border (1024KB) without log scales"""
+    plt.figure(figsize=(10, 6))
+
+    # Plot sequential access
+    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # Plot random access
+    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+
+    # No log scales
+    plt.xscale('linear')
+    plt.yscale('linear')
+
+    # Focus on L2 cache border region (512KB to 2048KB)
+    plt.xlim(512, 2048)
+    plt.ylim(0, 3.0)  # Zoom y-axis to use full plot area
+
+    # Add L2 cache boundary line
+    plt.axvline(x=1024, color='green', linestyle='--', linewidth=1.5, label='L2 Cache (~1MB)')
+
+    plt.xlabel('Array Size (KB)', fontsize=12)
+    plt.ylabel('Time (seconds)', fontsize=12)
+    plt.title('Cache Performance Focus: L2 Cache Border (~1MB) - N=5 Averaged', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3, which="both", axis="both")
+    plt.tight_layout()
+
+    plt.savefig('cache_performance_l2_focus.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 4 saved to cache_performance_l2_focus.png")
+
+def plot_results():
+    """Generate all four plots"""
+    sizes, seq_times, rand_times = load_data()
+
+    # Create all four plots
+    create_plot_1_x_log_only(sizes, seq_times, rand_times)
+    create_plot_2_both_log(sizes, seq_times, rand_times)
+    create_plot_3_l1_border(sizes, seq_times, rand_times)
+    create_plot_4_l2_border(sizes, seq_times, rand_times)
+
+    print("All plots generated successfully!")
 
 if __name__ == "__main__":
     plot_results()

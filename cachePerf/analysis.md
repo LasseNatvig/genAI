@@ -16,8 +16,13 @@ Initially written by cline w/mistral-medium @idun-NTNU, revised and commented in
 - Performance remains nearly constant for small arrays (fits in cache).
 - Slight increase when array exceeds L1 cache size (~32KB). **Not seen in graph. Action is to use log scale y-axis**. Done
 - More significant increase when exceeding L2 cache size (~1MB). **Not so visible as expected. Action is to increase array size more slowly on both sides of the cache size thresholds**
-    * plan from cline looked OK, but updated plot_results.py crashed. Debugging **TODO**...
-    * Maybe also split into four plots, one overall with only x-axis as log scale, one overalle x and y log-scale, and one for each cache size border without log-scales?
+  - plan from cline looked OK, but updated plot_results.py crashed.
+    - Debugging: python script runs on 64-bit PC
+      - Ask cline for help:
+        - found it was my fault, debug code to check size of int tricked the plot script (Embarassing)
+    - Asked cline to split into four plots, one overall with only x-axis as log scale, one overall with both x and y log-scale, and one for each of the two cache size borders focusing around the border without log-scales. Done.
+    - continued: "both l1_focus and l2_focus plot should zoom in along the y-axis to use the whole plot area". Done.
+    continued: "double the number og array sizes around the L1 and L2 sizes, and also run N experiments for each array size, and plot the average values for the N samples. Test with N = 5"
 - Still relatively efficient due to prefetching and spatial locality.
 
 ### Random Access
