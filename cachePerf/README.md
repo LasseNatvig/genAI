@@ -15,7 +15,3 @@ analysis.md was reviewed, and cline was asked to do improvements (see actions)
 ## technical experience
 
 * hang/stopped --- closed vsCode and restarted, could continue.
-* indication that cline uses claude-dev? it stores a focus-chain document
-  * in lasse@RPi4-32BitLegacyApril26:~/.config/Code/User/globalStorage/saoudrizwan.claude-dev ...
-  * **TODO** ask pavlo about it?
-  * 
