@@ -23,15 +23,15 @@ def run_benchmark():
     return np.array(data)
 
 def load_data():
-    """Load data from file or run benchmark"""
+    """Load data from file - now with multiple samples per size"""
     if not os.path.exists('results.txt'):
         # Run benchmark and save results
         result = subprocess.run(["./cache_demo"], capture_output=True, text=True)
         with open('results.txt', 'w') as f:
             f.write(result.stdout)
 
-    # Load data from file - skip any non-numeric lines (like "size of int 4")
-    data = []
+    # Load data from file - group by size, creating arrays of samples
+    data_dict = {}
     with open('results.txt', 'r') as f:
         for line in f:
             line = line.strip()
