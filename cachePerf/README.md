@@ -8,6 +8,10 @@ Experiment with RPi4 vsCode cline mistral-medium June 24th 2026. Continued June 
 * (after "first round") improve the plot by using logarithmic scale on the x-axis, and mark the measured samples as small rings along the lines
 * rewrite analysis.md so that my markdownlint extension do not give report problems (**TODO** see if this can be specified as a skill)
 
+## improvements
+
+analysis.md was reviewed, and cline was asked to do improvements (see actions)
+
 ## technical experience
 
 * hang/stopped --- closed vsCode and restarted, could continue.

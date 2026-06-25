@@ -62,9 +62,26 @@ void benchmark(int array_size, int iterations) {
 int main() {
     srand(time(NULL));
 
-    // Test array sizes from 1KB to 4MB in powers of 2
-    for (int size = MIN_SIZE; size <= MAX_SIZE; size *= 2) {
-        benchmark(size, ITERATIONS);
+        printf("size of int %d\n", sizeof(int));
+
+    // Test array sizes with finer granularity around cache boundaries
+    // L1 cache ~32KB, L2 cache ~1MB for Raspberry Pi4B
+    int sizes[] = {
+        // Small sizes
+        MIN_SIZE, 2048, 4096, 8192, 16384,
+        // Around L1 cache (32KB)
+        24576, 32768, 40960,
+        // Between L1 and L2
+        49152, 65536, 98304, 131072, 196608, 262144, 393216, 524288,
+        // Around L2 cache (1MB)
+        786432, 1048576, 1572864,
+        // Larger sizes
+        2097152, 3145728, 4194304
+    };
+    int num_sizes = sizeof(sizes) / sizeof(sizes[0]);
+
+    for (int i = 0; i < num_sizes; i++) {
+        benchmark(sizes[i], ITERATIONS);
     }
 
     return 0;

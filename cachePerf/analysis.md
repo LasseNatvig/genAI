@@ -14,8 +14,10 @@ Initially written by cline w/mistral-medium @idun-NTNU, revised and commented in
 ### Sequential Access
 
 - Performance remains nearly constant for small arrays (fits in cache).
-- Slight increase when array exceeds L1 cache size (~32KB). **Not seen in graph. Action is to use log scale y-axis**
-- More significant increase when exceeding L2 cache size (~1MB). **Not so visible as expected. Action is to increase array size more slowly on both sides of the cache size thresholds more** Maybe also split into four plots, one overall with only x-axis as log scale, one overalle x and y log-scale, and one for each cache size border without log-scales?
+- Slight increase when array exceeds L1 cache size (~32KB). **Not seen in graph. Action is to use log scale y-axis**. Done
+- More significant increase when exceeding L2 cache size (~1MB). **Not so visible as expected. Action is to increase array size more slowly on both sides of the cache size thresholds**
+    * plan from cline looked OK, but updated plot_results.py crashed. Debugging **TODO**...
+    * Maybe also split into four plots, one overall with only x-axis as log scale, one overalle x and y log-scale, and one for each cache size border without log-scales?
 - Still relatively efficient due to prefetching and spatial locality.
 
 ### Random Access

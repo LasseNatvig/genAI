@@ -46,8 +46,9 @@ def plot_results():
     plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
     plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
-    # Use logarithmic scale on x-axis
+    # Use logarithmic scale on x-axis and y-axis
     plt.xscale('log', base=2)
+    plt.yscale('log')
 
     # Add cache boundary lines for Raspberry Pi4B
     plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
