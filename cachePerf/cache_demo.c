@@ -3,8 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define MIN_SIZE 1024      // 1KB (256 ints) Should always be 1K
-// #define MAX_SIZE 4194304   // 4MB (1M ints)
+#define K 1024      // 1KB (256 ints)
 #define ITERATIONS 100
 #define N_EXPERIMENTS 10    // Number of experiments to run per array size
 
@@ -78,15 +77,12 @@ int main() {
     srand(time(NULL));
 
     // printf("size of int %d\n", sizeof(int)); // Answer was 4, as expected for 32 bit
-
-     // Test array sizes with finer granularity around cache boundaries
-     // L1 cache ~32KB, L2 cache ~1MB for Raspberry Pi4B
-     int sizes[] = { MIN_SIZE, 2*MIN_SIZE, 3*MIN_SIZE, 4*MIN_SIZE, 5*MIN_SIZE, 6*MIN_SIZE, 7*MIN_SIZE, 8*MIN_SIZE,
-        9*MIN_SIZE, 10*MIN_SIZE, 11*MIN_SIZE, 12*MIN_SIZE, 16*MIN_SIZE, 32*MIN_SIZE, 64*MIN_SIZE, 
-        128*MIN_SIZE, 140*MIN_SIZE, 160*MIN_SIZE, 180*MIN_SIZE, 200*MIN_SIZE, 220*MIN_SIZE, 240*MIN_SIZE, 260*MIN_SIZE, 280*MIN_SIZE, 300*MIN_SIZE,
-        320*MIN_SIZE, 340*MIN_SIZE, 360*MIN_SIZE, 380*MIN_SIZE, 400*MIN_SIZE, 500*MIN_SIZE, 600*MIN_SIZE, 
-        800*MIN_SIZE, 1000*MIN_SIZE   
-     };
+    // Test array sizes with finer granularity around cache boundaries
+    // L1 cache ~32KB, L2 cache ~1MB for Raspberry Pi4B
+    int sizes[] = { K, 2*K, 3*K, 4*K, 5*K, 6*K, 7*K, 8*K, 9*K, 10*K, 11*K, 12*K, 16*K, 32*K, 64*K, 
+       128*K, 140*K, 160*K, 180*K, 200*K, 220*K, 240*K, 260*K, 280*K, 300*K,
+       320*K, 340*K, 360*K, 380*K, 400*K, 500*K, 600*K, 800*K, 1000*K   
+    };
     int num_sizes = sizeof(sizes) / sizeof(sizes[0]);
 
     for (int i = 0; i < num_sizes; i++) {
