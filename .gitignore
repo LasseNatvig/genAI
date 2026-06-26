@@ -41,3 +41,9 @@ machine.txt
 poe_assistant/sensehat
 genAI-test-june-2026/test
 cachePerf/cache_demo
+cachePerf/.vscode/tasks.json
+cachePerf/cache_performance_both_log.png
+cachePerf/cache_performance_l1_focus.png
+cachePerf/cache_performance_l2_focus.png
+cachePerf/cache_performance_x_log.png
+cachePerf/cache_performance_x_log.png

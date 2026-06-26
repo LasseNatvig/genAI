@@ -31,7 +31,7 @@ def load_data():
             f.write(result.stdout)
 
     # Load data from file - group by size, creating arrays of samples
-    data_dict = {}
+    data = []
     with open('results.txt', 'r') as f:
         for line in f:
             line = line.strip()
@@ -48,6 +48,23 @@ def load_data():
     seq_times = data[:, 1]
     rand_times = data[:, 2]
     return sizes, seq_times, rand_times
+
+def load_summary():
+    """Load min values per size from summary.txt"""
+    data = []
+    with open('summary.txt', 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line.startswith('size_kb') or not line:
+                continue
+            parts = line.split()
+            if len(parts) == 7:
+                data.append((float(parts[0]), float(parts[1]), float(parts[4])))
+    data = np.array(data)
+    sizes    = data[:, 0]  # already in KB
+    seq_mins = data[:, 1]
+    rand_mins = data[:, 2]
+    return sizes, seq_mins, rand_mins
 
 def create_plot_1_x_log_only(sizes, seq_times, rand_times):
     """Plot with only x-axis as log scale"""
@@ -70,13 +87,13 @@ def create_plot_1_x_log_only(sizes, seq_times, rand_times):
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
-    plt.title('Cache Performance: Sequential vs Random Access (X-axis Log Scale) - N=5 Averaged', fontsize=14)
+    plt.title('Cache Performance: Sequential vs Random Access (X-axis Log Scale) - Min Value', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3, which="both", axis="both")
     plt.tight_layout()
 
-    plt.savefig('cache_performance_x_log.png', dpi=150, bbox_inches='tight')
-    print(f"Plot 1 saved to cache_performance_x_log.png")
+    plt.savefig('c_perf_x_log.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 1 saved to c_perf_x_log.png")
 
 def create_plot_2_both_log(sizes, seq_times, rand_times):
     """Plot with both x and y log scale"""
@@ -100,13 +117,13 @@ def create_plot_2_both_log(sizes, seq_times, rand_times):
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
-    plt.title('Cache Performance: Sequential vs Random Access (Both Axes Log Scale) - N=5 Averaged', fontsize=14)
+    plt.title('Cache Performance: Sequential vs Random Access (Both Axes Log Scale) - Min Value', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3, which="both", axis="both")
     plt.tight_layout()
 
-    plt.savefig('cache_performance_both_log.png', dpi=150, bbox_inches='tight')
-    print(f"Plot 2 saved to cache_performance_both_log.png")
+    plt.savefig('c_perf_both_log.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 2 saved to c_perf_both_log.png")
 
 def create_plot_3_l1_border(sizes, seq_times, rand_times):
     """Focus on L1 cache border (32KB) without log scales"""
@@ -133,13 +150,13 @@ def create_plot_3_l1_border(sizes, seq_times, rand_times):
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
-    plt.title('Cache Performance Focus: L1 Cache Border (~32KB) - N=5 Averaged', fontsize=14)
+    plt.title('Cache Performance Focus: L1 Cache Border (~32KB) - Min Value', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3, which="both", axis="both")
     plt.tight_layout()
 
-    plt.savefig('cache_performance_l1_focus.png', dpi=150, bbox_inches='tight')
-    print(f"Plot 3 saved to cache_performance_l1_focus.png")
+    plt.savefig('c_perf_l1_focus.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 3 saved to c_perf_l1_focus.png")
 
 def create_plot_4_l2_border(sizes, seq_times, rand_times):
     """Focus on L2 cache border (1024KB) without log scales"""
@@ -166,23 +183,53 @@ def create_plot_4_l2_border(sizes, seq_times, rand_times):
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
-    plt.title('Cache Performance Focus: L2 Cache Border (~1MB) - N=5 Averaged', fontsize=14)
+    plt.title('Cache Performance Focus: L2 Cache Border (~1MB) - Min Value', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3, which="both", axis="both")
     plt.tight_layout()
 
-    plt.savefig('cache_performance_l2_focus.png', dpi=150, bbox_inches='tight')
-    print(f"Plot 4 saved to cache_performance_l2_focus.png")
+    plt.savefig('c_perf_l2_focus.png', dpi=150, bbox_inches='tight')
+    print(f"Plot 4 saved to c_perf_l2_focus.png")
+
+def write_summary():
+    """Write summary.txt with one line per array size: min, mean, RSD for seq and rand times"""
+    from collections import defaultdict
+
+    groups = defaultdict(lambda: {'seq': [], 'rand': []})
+    with open('results.txt', 'r') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('size of int'):
+                parts = line.split()
+                if len(parts) == 3:
+                    try:
+                        size = int(parts[0])
+                        groups[size]['seq'].append(float(parts[1]))
+                        groups[size]['rand'].append(float(parts[2]))
+                    except ValueError:
+                        continue
+
+    with open('summary.txt', 'w') as f:
+        f.write(f"{'size_kb':>10}  {'seq_min':>10}  {'seq_mean':>10}  {'seq_rsd%':>10}  {'rand_min':>10}  {'rand_mean':>10}  {'rand_rsd%':>10}\n")
+        for size in sorted(groups):
+            seq = np.array(groups[size]['seq'])
+            rand = np.array(groups[size]['rand'])
+            seq_rsd  = (seq.std()  / seq.mean()  * 100) if seq.mean()  != 0 else 0
+            rand_rsd = (rand.std() / rand.mean() * 100) if rand.mean() != 0 else 0
+            f.write(f"{size // 1024:>10}  {seq.min():>10.6f}  {seq.mean():>10.6f}  {seq_rsd:>10.2f}  {rand.min():>10.6f}  {rand.mean():>10.6f}  {rand_rsd:>10.2f}\n")
+
+    print("Summary written to summary.txt")
 
 def plot_results():
     """Generate all four plots"""
-    sizes, seq_times, rand_times = load_data()
+    write_summary()
+    sizes, seq_mins, rand_mins = load_summary()
 
     # Create all four plots
-    create_plot_1_x_log_only(sizes, seq_times, rand_times)
-    create_plot_2_both_log(sizes, seq_times, rand_times)
-    create_plot_3_l1_border(sizes, seq_times, rand_times)
-    create_plot_4_l2_border(sizes, seq_times, rand_times)
+    create_plot_1_x_log_only(sizes, seq_mins, rand_mins)
+    create_plot_2_both_log(sizes, seq_mins, rand_mins)
+    create_plot_3_l1_border(sizes, seq_mins, rand_mins)
+    create_plot_4_l2_border(sizes, seq_mins, rand_mins)
 
     print("All plots generated successfully!")
 
