@@ -81,11 +81,11 @@ int main() {
     printf("size of int: %d bytes\n", (int)sizeof(int));
 
     // Test array sizes with finer granularity around cache boundaries
-    // L1 data cache ~32KB per core, L2 cache ~2MB per P-core (Intel i7-13700)
+    // L1 data ~32KB per core, L2 ~2MB per P-core, L3 ~30MB shared (Intel i7-13700)
     int sizes[] = { K, 2*K, 3*K, 4*K, 5*K, 6*K, 7*K, 8*K, 9*K, 10*K, 11*K, 12*K, 16*K, 32*K, 64*K,
-       128*K, 140*K, 160*K, 180*K, 200*K, 220*K, 240*K, 260*K, 280*K, 300*K,
-       320*K, 340*K, 360*K, 380*K, 400*K, 500*K, 600*K, 800*K, 1000*K
-    };
+       128*K, 140*K, 180*K, 220*K, 260*K, 300*K,
+       320*K, 340*K, 360*K, 380*K, 400*K, 450*K, 500*K, 550*K, 600*K, 800*K, 1000*K, 1400*K,
+       2000*K, 3000*K, 4000*K, 8000*K, 12000*K, 16000*K, 20000*K}; 
     int num_sizes = sizeof(sizes) / sizeof(sizes[0]);
 
     for (int i = 0; i < num_sizes; i++) {

@@ -101,6 +101,7 @@ def create_plot_1_x_log_only(sizes, seq_times, rand_times, title_suffix='Min Val
     # Add cache boundary lines
     plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
     plt.axvline(x=2048, color='green', linestyle='--', linewidth=1.5, label='L2 Cache (~2MB)')
+    plt.axvline(x=30720, color='orange', linestyle='--', linewidth=1.5, label='L3 Cache (~30MB)')
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
@@ -142,6 +143,7 @@ def create_plot_2_both_log(sizes, seq_times, rand_times, title_suffix='Min Value
     # Add cache boundary lines
     plt.axvline(x=32, color='cyan', linestyle='--', linewidth=1.5, label='L1 Cache (~32KB)')
     plt.axvline(x=2048, color='green', linestyle='--', linewidth=1.5, label='L2 Cache (~2MB)')
+    plt.axvline(x=30720, color='orange', linestyle='--', linewidth=1.5, label='L3 Cache (~30MB)')
 
     plt.xlabel('Array Size (KB)', fontsize=12)
     plt.ylabel('Time (seconds)', fontsize=12)
