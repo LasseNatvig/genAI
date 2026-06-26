@@ -1,5 +1,6 @@
 CC = gcc
-CFLAGS = -O2 -Wall
+CFLAGS = -O2 -Wall # abot 25-50% faster than without -O2
+# CFLAGS = -Wall
 
 all: cache_demo
 

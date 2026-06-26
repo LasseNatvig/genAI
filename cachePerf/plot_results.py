@@ -50,7 +50,7 @@ def load_data():
     return sizes, seq_times, rand_times
 
 def load_summary():
-    """Load min and mean values per size from summary.txt"""
+    """Load min, mean, and RSD values per size from summary.txt"""
     data = []
     with open('summary.txt', 'r') as f:
         for line in f:
@@ -61,26 +61,39 @@ def load_summary():
             if len(parts) == 7:
                 # size_kb seq_min seq_mean seq_rsd% rand_min rand_mean rand_rsd%
                 data.append((float(parts[0]), float(parts[1]), float(parts[2]),
-                             float(parts[4]), float(parts[5])))
+                             float(parts[3]), float(parts[4]), float(parts[5]),
+                             float(parts[6])))
     data = np.array(data)
     sizes      = data[:, 0]  # already in KB
     seq_mins   = data[:, 1]
     seq_means  = data[:, 2]
-    rand_mins  = data[:, 3]
-    rand_means = data[:, 4]
-    return sizes, seq_mins, seq_means, rand_mins, rand_means
+    seq_rsds   = data[:, 3]
+    rand_mins  = data[:, 4]
+    rand_means = data[:, 5]
+    rand_rsds  = data[:, 6]
+    return sizes, seq_mins, seq_means, seq_rsds, rand_mins, rand_means, rand_rsds
 
-def create_plot_1_x_log_only(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min'):
+def create_plot_1_x_log_only(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min', seq_err=None, rand_err=None):
     """Plot with only x-axis as log scale"""
     plt.figure(figsize=(10, 6))
 
     # Plot sequential access
-    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
-    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if seq_err is not None:
+        plt.errorbar(sizes, seq_times, yerr=seq_err, fmt='b-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='blue', elinewidth=1, capsize=3, label='Sequential Access')
+    else:
+        plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+        plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Plot random access
-    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
-    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if rand_err is not None:
+        plt.errorbar(sizes, rand_times, yerr=rand_err, fmt='r-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='red', elinewidth=1, capsize=3, label='Random Access')
+    else:
+        plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+        plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Only x-axis log scale
     plt.xscale('log', base=2)
@@ -100,17 +113,27 @@ def create_plot_1_x_log_only(sizes, seq_times, rand_times, title_suffix='Min Val
     plt.savefig(fname, dpi=150, bbox_inches='tight')
     print(f"Plot saved to {fname}")
 
-def create_plot_2_both_log(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min'):
+def create_plot_2_both_log(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min', seq_err=None, rand_err=None):
     """Plot with both x and y log scale"""
     plt.figure(figsize=(10, 6))
 
     # Plot sequential access
-    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
-    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if seq_err is not None:
+        plt.errorbar(sizes, seq_times, yerr=seq_err, fmt='b-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='blue', elinewidth=1, capsize=3, label='Sequential Access')
+    else:
+        plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+        plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Plot random access
-    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
-    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if rand_err is not None:
+        plt.errorbar(sizes, rand_times, yerr=rand_err, fmt='r-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='red', elinewidth=1, capsize=3, label='Random Access')
+    else:
+        plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+        plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Both axes log scale
     plt.xscale('log', base=2)
@@ -131,17 +154,27 @@ def create_plot_2_both_log(sizes, seq_times, rand_times, title_suffix='Min Value
     plt.savefig(fname, dpi=150, bbox_inches='tight')
     print(f"Plot saved to {fname}")
 
-def create_plot_3_l1_border(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min'):
+def create_plot_3_l1_border(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min', seq_err=None, rand_err=None):
     """Focus on L1 cache border (32KB) without log scales"""
     plt.figure(figsize=(10, 6))
 
     # Plot sequential access
-    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
-    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if seq_err is not None:
+        plt.errorbar(sizes, seq_times, yerr=seq_err, fmt='b-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='blue', elinewidth=1, capsize=3, label='Sequential Access')
+    else:
+        plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+        plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Plot random access
-    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
-    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if rand_err is not None:
+        plt.errorbar(sizes, rand_times, yerr=rand_err, fmt='r-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='red', elinewidth=1, capsize=3, label='Random Access')
+    else:
+        plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+        plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # No log scales
     plt.xscale('linear')
@@ -165,17 +198,27 @@ def create_plot_3_l1_border(sizes, seq_times, rand_times, title_suffix='Min Valu
     plt.savefig(fname, dpi=150, bbox_inches='tight')
     print(f"Plot saved to {fname}")
 
-def create_plot_4_l2_border(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min'):
+def create_plot_4_l2_border(sizes, seq_times, rand_times, title_suffix='Min Value', file_suffix='min', seq_err=None, rand_err=None):
     """Focus on L2 cache border (1024KB) without log scales"""
     plt.figure(figsize=(10, 6))
 
     # Plot sequential access
-    plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
-    plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if seq_err is not None:
+        plt.errorbar(sizes, seq_times, yerr=seq_err, fmt='b-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='blue', elinewidth=1, capsize=3, label='Sequential Access')
+    else:
+        plt.plot(sizes, seq_times, 'b-', linewidth=2, label='Sequential Access')
+        plt.plot(sizes, seq_times, 'bo', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # Plot random access
-    plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
-    plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
+    if rand_err is not None:
+        plt.errorbar(sizes, rand_times, yerr=rand_err, fmt='r-', linewidth=2, marker='o',
+                     markersize=6, markerfacecolor='none', markeredgewidth=1.5,
+                     ecolor='red', elinewidth=1, capsize=3, label='Random Access')
+    else:
+        plt.plot(sizes, rand_times, 'r-', linewidth=2, label='Random Access')
+        plt.plot(sizes, rand_times, 'ro', markersize=6, markerfacecolor='none', markeredgewidth=1.5)
 
     # No log scales
     plt.xscale('linear')
@@ -229,21 +272,25 @@ def write_summary():
     print("Summary written to summary.txt")
 
 def plot_results():
-    """Generate all eight plots (4 min, 4 mean)"""
+    """Generate all eight plots (4 min, 4 mean with RSD error bars)"""
     write_summary()
-    sizes, seq_mins, seq_means, rand_mins, rand_means = load_summary()
+    sizes, seq_mins, seq_means, seq_rsds, rand_mins, rand_means, rand_rsds = load_summary()
 
-    # Min value plots
+    # Absolute errors derived from RSD: err = mean * rsd% / 100
+    seq_errs  = seq_means  * seq_rsds  / 100
+    rand_errs = rand_means * rand_rsds / 100
+
+    # Min value plots (no error bars)
     create_plot_1_x_log_only(sizes, seq_mins, rand_mins, 'Min Value', 'min')
     create_plot_2_both_log(sizes, seq_mins, rand_mins, 'Min Value', 'min')
     create_plot_3_l1_border(sizes, seq_mins, rand_mins, 'Min Value', 'min')
     create_plot_4_l2_border(sizes, seq_mins, rand_mins, 'Min Value', 'min')
 
-    # Mean value plots
-    create_plot_1_x_log_only(sizes, seq_means, rand_means, 'Mean Value', 'mean')
-    create_plot_2_both_log(sizes, seq_means, rand_means, 'Mean Value', 'mean')
-    create_plot_3_l1_border(sizes, seq_means, rand_means, 'Mean Value', 'mean')
-    create_plot_4_l2_border(sizes, seq_means, rand_means, 'Mean Value', 'mean')
+    # Mean value plots (with RSD error bars)
+    create_plot_1_x_log_only(sizes, seq_means, rand_means, 'Mean Value ± RSD', 'mean', seq_errs, rand_errs)
+    create_plot_2_both_log(sizes, seq_means, rand_means, 'Mean Value ± RSD', 'mean', seq_errs, rand_errs)
+    create_plot_3_l1_border(sizes, seq_means, rand_means, 'Mean Value ± RSD', 'mean', seq_errs, rand_errs)
+    create_plot_4_l2_border(sizes, seq_means, rand_means, 'Mean Value ± RSD', 'mean', seq_errs, rand_errs)
 
     print("All plots generated successfully!")
 
