@@ -4,6 +4,9 @@
 #include <string.h>
 #include <time.h>
 
+#define MAX_PATH_LEN 256
+#define TIMESTAMP_LEN 20
+
 // Function prototypes
 void insertion_sort(int arr[], int n);
 void bubble_sort(int arr[], int n);
@@ -13,12 +16,16 @@ void generate_random_array(int arr[], int n);
 void copy_array(int dest[], int src[], int n);
 double bench_sort(void (*sort_func)(int[], int), int arr[], int n, int iterations);
 double bench_quicksort(void (*sort_func)(int[], int, int), int arr[], int n, int iterations);
+void get_timestamp(char *timestamp, int len);
+void write_results_to_csv(const char *filename, int N, int E, double insertion_time, double bubble_time, double quicksort_time, const char *timestamp);
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <N> <E>\n", argv[0]);
+    if (argc != 4 && argc != 5) {
+        fprintf(stderr, "Usage: %s <N> <E> [csv_filename] [timestamp]\n", argv[0]);
         fprintf(stderr, "  N: Number of random integers to generate\n");
         fprintf(stderr, "  E: Number of runs for each algorithm\n");
+        fprintf(stderr, "  csv_filename: (optional) CSV file to append results to\n");
+        fprintf(stderr, "  timestamp: (optional) Timestamp for this run\n");
         return 1;
     }
 
@@ -28,6 +35,27 @@ int main(int argc, char *argv[]) {
     if (N <= 0 || E <= 0) {
         fprintf(stderr, "Error: N and E must be positive integers\n");
         return 1;
+    }
+
+    // Determine CSV filename and timestamp
+    char csv_filename[MAX_PATH_LEN];
+    char provided_timestamp[TIMESTAMP_LEN] = "";
+    if (argc == 5) {
+        // Use provided CSV filename and timestamp
+        snprintf(csv_filename, MAX_PATH_LEN, "%s", argv[3]);
+        snprintf(provided_timestamp, TIMESTAMP_LEN, "%s", argv[4]);
+    } else if (argc == 4) {
+        // Use provided CSV filename, generate timestamp
+        char timestamp[TIMESTAMP_LEN];
+        get_timestamp(timestamp, TIMESTAMP_LEN);
+        snprintf(csv_filename, MAX_PATH_LEN, "%s", argv[3]);
+        snprintf(provided_timestamp, TIMESTAMP_LEN, "%s", timestamp);
+    } else {
+        // Generate timestamp for CSV file
+        char timestamp[TIMESTAMP_LEN];
+        get_timestamp(timestamp, TIMESTAMP_LEN);
+        snprintf(csv_filename, MAX_PATH_LEN, "results_%s.csv", timestamp);
+        snprintf(provided_timestamp, TIMESTAMP_LEN, "%s", timestamp);
     }
 
     // Seed random number generator
@@ -66,6 +94,10 @@ int main(int argc, char *argv[]) {
     double avg_quick = bench_quicksort(quicksort, original_array, N, E);
     printf("QuickSort: %.6f seconds average\n", avg_quick);
 
+    // Write results to CSV file
+    write_results_to_csv(csv_filename, N, E, avg_insertion, avg_bubble, avg_quick, provided_timestamp);
+    printf("Results written to %s\n", csv_filename);
+
     // Free memory
     free(original_array);
     free(copy1);
@@ -73,6 +105,38 @@ int main(int argc, char *argv[]) {
     free(copy3);
 
     return 0;
+}
+
+// Get current timestamp as string
+void get_timestamp(char *timestamp, int len) {
+    time_t now = time(NULL);
+    struct tm *tm_info = localtime(&now);
+    strftime(timestamp, len, "%Y%m%d_%H%M%S", tm_info);
+}
+
+// Write results to CSV file
+void write_results_to_csv(const char *filename, int N, int E, double insertion_time, double bubble_time, double quicksort_time, const char *timestamp) {
+    FILE *file = fopen(filename, "a");
+
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open %s for writing\n", filename);
+        return;
+    }
+
+    // Check if file is empty (first write)
+    fseek(file, 0, SEEK_END);
+    long file_size = ftell(file);
+
+    if (file_size == 0) {
+        // Write header
+        fprintf(file, "timestamp,N,E,insertion_sort_time,bubble_sort_time,quicksort_time\n");
+    }
+
+    // Write data with provided timestamp
+    fprintf(file, "%s,%d,%d,%.6f,%.6f,%.6f\n",
+            timestamp, N, E, insertion_time, bubble_time, quicksort_time);
+
+    fclose(file);
 }
 
 // Generate array of N random integers
