@@ -1,0 +1,23 @@
+## scratch notes
+
+Create a folder with only the essentials from the RPi setup example, that is .vscode folder, makefile and a C-file. Feel free to use other and better setups
+
+remove assemble file and 
+
+cline, act mode
+
+1) Implement 3 functions for sorting of integers, insertion sort, bubble sort and quicksort. The main program should first generate a sequence of N random integers, where N is a constant. Then run the three algorithms 5 times, and report the average time consumption
+
+read code, evaluate, test
+
+(start new task:) burde nok ikke det, da må den lese på nytt ?
+
+2) Extend the test by varying N from 1000 up to 10000 in steps of 1000, and the from 10 000 to 100 000 in steps of 10 000. Use matplotlib to plot the performance curves
+
+fikk en løsning som gjør altformye i python, skulle bedte om å variere problemsize i C --- men prøvde ut dette videre
+
+ble mye jobb og kluss for cline 
+
+cline feature setting editor bacground edit 
+
+tar veldig lang tid fra 60000 og oppover, begrens til 30000, smaller steps
