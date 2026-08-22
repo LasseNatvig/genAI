@@ -11,10 +11,10 @@ def get_timestamp():
 
 def main():
     # Parameters
-    E = 5      # Number of runs per algorithm
+    E = 20      # Number of runs per algorithm
 
     # Test N values from 10000 to 20000 in steps of 1000
-    N_values = range(10000, 20001, 1000)
+    N_values = range(10000, 40001, 1000)
 
     # Generate timestamp for CSV file
     timestamp = get_timestamp()

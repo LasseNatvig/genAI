@@ -38,9 +38,9 @@ def plot_results(csv_file):
     plt.figure(figsize=(12, 8))
 
     # Plot each sorting algorithm
-    algorithms = ['insertion_sort_time', 'bubble_sort_time', 'quicksort_time', 'qsort_time']
-    labels = ['Insertion Sort', 'Bubble Sort', 'QuickSort', 'Library qsort']
-    colors = ['red', 'blue', 'green', 'purple']
+    algorithms = ['quicksort_time', 'qsort_time']
+    labels = ['QuickSort', 'Library qsort']
+    colors = ['green', 'purple']
 
     for alg, label, color in zip(algorithms, labels, colors):
         plt.plot(df['N'], df[alg], 'o-', label=label, color=color, linewidth=2, markersize=8)
