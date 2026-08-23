@@ -65,9 +65,8 @@ int main(int argc, char *argv[]) {
     // Allocate memory for arrays
     int *original_array = (int *)malloc(N * sizeof(int));
     int *copy1 = (int *)malloc(N * sizeof(int));
-    int *copy2 = (int *)malloc(N * sizeof(int));
 
-    if (!original_array || !copy1 || !copy2) {
+    if (!original_array || !copy1) {
         fprintf(stderr, "Error: Memory allocation failed\n");
         return 1;
     }
@@ -96,7 +95,6 @@ int main(int argc, char *argv[]) {
     // Free memory
     free(original_array);
     free(copy1);
-    free(copy2);
 
     return 0;
 }

@@ -1,0 +1,1 @@
+make a new folder that copies the setup in this folder but does another related experiment. I want to understand the different performance of the two quick sort implementations.test for various problemsizes and also try to read more detailed performance data from the processor or study the implementation code to understand performance differences
