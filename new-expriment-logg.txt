@@ -1,0 +1,14 @@
+make a new folder that copies the setup in this folder but does another related experiment. I want to understand the different performance of the two quick sort implementations.test for various problemsizes and also try to read more detailed performance data from the processor or study the implementation code to understand performance differences
+
+plan - send
+
+[Command completion could not be observed; the command may still be running and must not be assumed to have succeeded. The terminal has been left open and will not be closed automatically.]
+The command's output could not be captured through shell integration. Here is the current terminal's content, which may include the command's output:
+
+lasse@RPi4-32BitLegacy:~/code/genAI/genai2-cntd-1 $ ls -la /home/lasse/code/genAI/genai2-cntd-1/quicksort_comparison_experiment/
+total 16
+drwxr-xr-x 3 lasse lasse 4096 Aug 23 13:03 .
+drwxr-xr-x 4 lasse lasse 4096 Aug 23 12:00 ..
+-rw-r--r-- 1 lasse lasse  821 Aug 23 13:03 create_files.py
+drwxr-xr-x 2 lasse lasse 4096 Aug 23 12:00 results
+[Shell integration did not report command completion (this happens e.g. inside ssh or nested shells); output was captured with a timing heuristic, may be incomplete or include the shell prompt, and the command may still be running.]

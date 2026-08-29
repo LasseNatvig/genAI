@@ -1,0 +1,54 @@
+## scratch notes
+
+mousepad har word-wrapping 
+
+Create a folder with only the essentials from the RPi setup example, that is .vscode folder, makefile and a C-file. Feel free to use other and better setups if you have
+
+
+cline, act mode
+
+1) Implement 3 functions for sorting of integers, insertion sort, bubble sort and quicksort. The main program should first generate a sequence of N random integers. Then run the three algorithms E times, and report the average time consumption. N and E should be passed as parameters to the C program. Write a python-script that calls C-program with parameter values N = 10 000 and E = 5. 
+
+read code, evaluate it and see if you would like to test it, if so, save
+
+do the same for the python script generated
+
+study the changes that cline does, approve if you beleive they are OK. (In my test-case at 2026-08-20 it also edited the Makefile with some improvements)
+
+When the executable (test) has been made you can test it with "./test 1000 3". 
+
+Try to run the python script, just press F5 in the filename.py window
+
+(TODO: prøv å starte pythons scriptet med kommando, ikke F5)
+
+(Tip: if it seems cline hangs, try restart vsCode (always use autosave for files)
+
+2) extend the python-script to do the performance test for values of N from 10000 up to 20000 in steps of 1000, change the C file to also store the measured results on a timestamped .csv file and make another python script that from such a *.csv file plots the performance with matplotlib. The plot script should also store the plot as a .png file with the same timestamp as the .csv file
+
+watch, evaluate, test the code you have got
+
+install missing python packages if necessary  ( you can ask cline for help)
+
+eg. ... see terminal, help install pandas ...
+
+diverse install og uninstall før python-script virket, må forventes
+
+see terminal, help install pandas
+
+MÅ LESE OVER og TESTE gjorde veldig mye her, mistet kontrollen  ..., virker som den har misforstått !!!
+
+misunderstanding, the performance results of the various runs of the C-program controlled from the python run script should be stored in one .csv file timestamped with the start of running the script. the plot-script should use the same timestamp on .png file produced
+
+får fikset det etterhvert, kjører og tester. Har fortsatt select a file to plot, og to 
+gamle .csv filer henger igjen, de bør slettes
+les over koden og legg ut den også, den viser en del annet nyttig
+
+
+(start new task:) burde nok ikke det, da må den lese på nytt ?
+
+
+HUSK
+
+cline feature setting editor bacground edit 
+
+
