@@ -1,0 +1,160 @@
+char0: .byte 'b'
+input0: .asciz "pyrpcsoxzjujuzagbtrto"
+.align 4
+result0: .word 1
+char1: .byte 'n'
+input1: .asciz "fuoiuzhrqr"
+.align 4
+result1: .word 0
+char2: .byte 'w'
+input2: .asciz "shueptki"
+.align 4
+result2: .word 0
+char3: .byte 'g'
+input3: .asciz "gqajbhscmdmshnsmims"
+.align 4
+result3: .word 1
+char4: .byte 'q'
+input4: .asciz "myfkvkid"
+.align 4
+result4: .word 0
+char5: .byte 'j'
+input5: .asciz "kxtkvuzrgpuhebg"
+.align 4
+result5: .word 0
+char6: .byte 'u'
+input6: .asciz "axtxs"
+.align 4
+result6: .word 0
+char7: .byte 'f'
+input7: .asciz "tsqxdegk"
+.align 4
+result7: .word 0
+char8: .byte 'z'
+input8: .asciz "mrnyfzhrxb"
+.align 4
+result8: .word 1
+char9: .byte 'o'
+input9: .asciz "rctht"
+.align 4
+result9: .word 0
+char10: .byte 'i'
+input10: .asciz "lijyxxzhhlnobfepp"
+.align 4
+result10: .word 1
+char11: .byte 'r'
+input11: .asciz "kubzzqctgaeafonzi"
+.align 4
+result11: .word 0
+char12: .byte 'v'
+input12: .asciz "imbcgqfmqobv"
+.align 4
+result12: .word 1
+char13: .byte 'v'
+input13: .asciz "rfiwcrzsvcgpvxwr"
+.align 4
+result13: .word 2
+char14: .byte 'p'
+input14: .asciz "nyceuradwvjwinqitzsmsec"
+.align 4
+result14: .word 0
+char15: .byte 'b'
+input15: .asciz "vvcigfytxybkfnh"
+.align 4
+result15: .word 1
+char16: .byte 'z'
+input16: .asciz "zrfrkzodp"
+.align 4
+result16: .word 2
+char17: .byte 'f'
+input17: .asciz "lmtmucrtmo"
+.align 4
+result17: .word 0
+char18: .byte 'o'
+input18: .asciz "bcxutvazchztfdyltuufvpw"
+.align 4
+result18: .word 0
+char19: .byte 'c'
+input19: .asciz "gesyckirmfzeeorcjqrewr"
+.align 4
+result19: .word 2
+char20: .byte 'h'
+input20: .asciz "xrchhicgtzlkii"
+.align 4
+result20: .word 2
+char21: .byte 't'
+input21: .asciz "gkkgaem"
+.align 4
+result21: .word 0
+char22: .byte 'm'
+input22: .asciz "titjmwcymqcep"
+.align 4
+result22: .word 2
+char23: .byte 'b'
+input23: .asciz "dllwcurqcewadzrlbu"
+.align 4
+result23: .word 1
+char24: .byte 'x'
+input24: .asciz "rgllumswkfbleykudvr"
+.align 4
+result24: .word 0
+char25: .byte 'h'
+input25: .asciz "tgfhddo"
+.align 4
+result25: .word 1
+char26: .byte 'x'
+input26: .asciz "ojkwxoiiwiemzvroku"
+.align 4
+result26: .word 1
+char27: .byte 'v'
+input27: .asciz "olbbdnpwyrulmcnvhimpb"
+.align 4
+result27: .word 1
+char28: .byte 'r'
+input28: .asciz "ukmqfvs"
+.align 4
+result28: .word 0
+char29: .byte 'w'
+input29: .asciz "sbhtetggqbaohhjsyyjnqrp"
+.align 4
+result29: .word 0
+char30: .byte 'h'
+input30: .asciz "yumly"
+.align 4
+result30: .word 0
+char31: .byte 'g'
+input31: .asciz "injjtfkruorkautq"
+.align 4
+result31: .word 0
+char32: .byte 'j'
+input32: .asciz "vcypledvewnwhof"
+.align 4
+result32: .word 0
+char33: .byte 'n'
+input33: .asciz "txeyhcfblbfokpuytuwdm"
+.align 4
+result33: .word 0
+char34: .byte 'n'
+input34: .asciz "avoyqxswtodfmonvu"
+.align 4
+result34: .word 1
+char35: .byte 'w'
+input35: .asciz "givinckicxzq"
+.align 4
+result35: .word 0
+char36: .byte 'o'
+input36: .asciz "zysshsnmogqosecu"
+.align 4
+result36: .word 2
+char37: .byte 'a'
+input37: .asciz "xwazybpbbdnsqiigc"
+.align 4
+result37: .word 1
+char38: .byte 'p'
+input38: .asciz "igdwnkkjepzhlhorza"
+.align 4
+result38: .word 1
+char39: .byte 'l'
+input39: .asciz "hcjrwxozyuqjpdllnmmzaqv"
+.align 4
+result39: .word 2
