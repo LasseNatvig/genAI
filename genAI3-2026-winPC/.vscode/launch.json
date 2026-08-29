@@ -12,12 +12,6 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            // "environment": [
-            //     {
-            //         "name": "SDL_VIDEODRIVER",
-            //         "value": "windows"
-            //     }
-            // ],
             "console": "integratedTerminal",
             "preLaunchTask": "build debug"
         },
