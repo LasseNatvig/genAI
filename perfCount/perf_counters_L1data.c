@@ -1,22 +1,11 @@
 #define _GNU_SOURCE   /* expose syscall(), pid_t under -std=c11 */
 
-// Initial code written by github copilot, early summer 2026. Further edited by Lasse Natvig for teachng purposes
-
-/* perf_counters.c — Hardware Performance Counter Demo (Raspberry Pi 4B)
+/* Initial code written by github copilot, early summer 2026. Further edited by Lasse Natvig for teaching purposes
+ * perf_counters.c — Hardware Performance Counter Demo (Raspberry Pi 4B)
  *
  * Uses perf_event_open() to read ARM Cortex-A72 PMU counters.
- * Runs four workloads that contrast:
- *   - Cache-friendly (sequential) vs cache-thrashing (large stride)
- *   - Branch-predictable (always taken) vs unpredictable (~50/50)
- *
  * The Cortex-A72 PMU provides 1 fixed cycle counter + 6 programmable
- * event counters, which is enough for all six PERF_TYPE_HARDWARE events.
- *
- * Build:  make          (or: gcc -O0 -Wall -o perf_counters perf_counters.c)
- * Run:    ./perf_counters
- *
- * If you see "Operation not permitted", lower the paranoia level:
- *   echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
+ * event counters, which is enough for all six PERF_TYPE_HARDWARE events. I
  */
 
 #include <errno.h>
@@ -28,10 +17,6 @@
 #include <sys/ioctl.h>
 #include <sys/syscall.h>
 #include <unistd.h>
-
-/* Array of 4 M ints = 16 MB — comfortably exceeds the 1 MB L2 on the A72 */
-#define ARRAY_ELEMS  (1 << 20)
-#define ITERATIONS   4
 
 /* ------------------------------------------------------------------ */
 /* perf_event_open syscall wrapper                                     */
@@ -67,8 +52,7 @@ static Counter ctrs[] = {
 /* ------------------------------------------------------------------ */
 /* Counter lifecycle helpers                                           */
 /* ------------------------------------------------------------------ */
-static int init_counters(void)
-{
+static int init_counters(void) {
     int any_open = 0;
     for (int i = 0; i < NUM_CTRS; i++) {
         struct perf_event_attr pe;
@@ -133,16 +117,14 @@ static void counters_stop(void)
 /* ------------------------------------------------------------------ */
 /* Output                                                              */
 /* ------------------------------------------------------------------ */
-static void fmtcol(char *buf, size_t sz, int avail, uint64_t val)
-{
+static void fmtcol(char *buf, size_t sz, int avail, uint64_t val) {
     if (avail)
         snprintf(buf, sz, "%11llu", (unsigned long long)val);
     else
         snprintf(buf, sz, "%11s", "n/a");
 }
 
-static void print_header(void)
-{
+static void print_header(void) {
     printf("\n%-26s %13s %13s %11s %11s %11s %11s   %s\n",
            "Workload",
            "Cycles", "Instructions",
@@ -161,8 +143,7 @@ static void print_header(void)
             printf("  (note: '%s' not available on this CPU)\n", ctrs[i].name);
 }
 
-static void print_row(const char *label)
-{
+static void print_row(const char *label) {
     uint64_t cycles = ctrs[0].value;
     uint64_t instrs = ctrs[1].value;
     uint64_t crefs  = ctrs[2].value;
@@ -198,111 +179,35 @@ static void print_row(const char *label)
            ipc_s, miss_s, brmis_s);
 }
 
-/* ------------------------------------------------------------------ */
-/* Workloads                                                           */
-/* ------------------------------------------------------------------ */
-
 /* Used as an output sink to prevent the compiler eliminating loops. */
 volatile uint64_t sink;
 
-/* 1. Sequential read — stride-1, hardware prefetcher works perfectly */
-static void wl_sequential(const int *arr, int n)
-{
-    uint64_t s = 0;
-    for (int it = 0; it < ITERATIONS; it++)
-        for (int i = 0; i < n; i++)
-            s += arr[i];
-    sink = s;
-}
-
-/* 2. Strided read — 256-byte hop between accesses, thrashes cache lines */
-static void wl_strided(const int *arr, int n)
-{
-    const int stride = 64;   /* 64 ints × 4 bytes = 256-byte stride */
-    uint64_t s = 0;
-    int count = n / stride;
-    for (int it = 0; it < ITERATIONS; it++)
-        for (int i = 0; i < count; i++)
-            s += arr[i * stride];
-    sink = s;
-}
-
-/* 3. Predictable branch — condition is always true (arr[i] >= 0) */
-static void wl_predictable(const int *arr, int n)
-{
-    uint64_t s = 0;
-    for (int it = 0; it < ITERATIONS; it++)
-        for (int i = 0; i < n; i++)
-            if (arr[i] >= 0) s += arr[i];   /* always taken */
-    sink = s;
-}
-
-/* 4. Unpredictable branch — alternates ~50/50 on odd/even values */
-static void wl_unpredictable(const int *arr, int n)
-{
-    uint64_t s = 0;
-    for (int it = 0; it < ITERATIONS; it++)
-        for (int i = 0; i < n; i++)
-            if (arr[i] & 1) s += arr[i];    /* ~50% taken */
-    sink = s;
-}
-
-/* ------------------------------------------------------------------ */
-/* main                                                                */
-/* ------------------------------------------------------------------ */
-int main(void) { 
-    { /* Show paranoia level so the user knows what to expect */    
-        FILE *f = fopen("/proc/sys/kernel/perf_event_paranoid", "r");
-        if (f) {
-            int p = 0;
-            fscanf(f, "%d", &p);
-            fclose(f);
-            printf("perf_event_paranoid = %d", p);
-            if (p > 1)
-                printf("  (WARNING: > 1 may block hw counters;"
-                       " needs <= 1 or root)");
-            printf("\n");
-        }
-    }
-    printf("ARM Cortex-A72 PMU Demo  —  %d × %d-element array (%d MB), "
-           "%d iterations\n",
-           ITERATIONS, ARRAY_ELEMS,
-           (int)((size_t)ARRAY_ELEMS * sizeof(int) / (1024 * 1024)),
-           ITERATIONS);
+int main(void) {
+    printf("ARM Cortex-A72 PMU Demo\n");
 
     if (init_counters() != 0)
         return 1;
 
-    /* Fill array: values 0 .. N-1  (all >= 0,  ~50% odd) */
-    int *arr = malloc((size_t)ARRAY_ELEMS * sizeof(int));
-    if (!arr) {
-        perror("malloc");
-        close_counters();
-        return 1;
-    }
-    for (int i = 0; i < ARRAY_ELEMS; i++)
-        arr[i] = i;
-
     print_header();
 
-    counters_start(); wl_sequential  (arr, ARRAY_ELEMS); counters_stop();
-    print_row("Sequential (stride=1)");
+    counters_start();
+    for (int i = 0; i < 1000; i++) {
+        int b = i;
+        b = b +2;
+        b = b % 56;
+    }
+    counters_stop();
+    print_row("Loop 1000 iterations");
 
-    counters_start(); wl_strided     (arr, ARRAY_ELEMS); counters_stop();
-    print_row("Strided (stride=64)");
+    counters_start();
+    for (int i = 0; i < 5000; i++) {
+        int b = i;
+        b = b +2;
+        b = b % 56;
+    }
+    counters_stop();
+    print_row("Loop 5000 iterations");
 
-    counters_start(); wl_predictable (arr, ARRAY_ELEMS); counters_stop();
-    print_row("Predictable branch");
-
-    counters_start(); wl_unpredictable(arr, ARRAY_ELEMS); counters_stop();
-    print_row("Unpredictable branch");
-
-    printf("\nWhat to observe:\n");
-    printf("  Cache Refs / Misses  — Strided miss%% should be >> Sequential miss%%\n");
-    printf("  BrMiss               — Unpredictable should be >> Predictable\n");
-    printf("  IPC                  — Higher = more work done per clock cycle\n\n");
-
-    free(arr);
     close_counters();
     return 0;
 }

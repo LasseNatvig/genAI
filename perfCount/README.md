@@ -4,6 +4,9 @@ Demonstrates reading ARM Cortex-A72 PMU (Performance Monitoring Unit) hardware
 counters from user-space using the Linux `perf_event_open()` syscall.
 No external tools required — the syscall is part of the kernel.
 
+NOTE: Original file written by github copilot is saved in *initial.bac
+
+
 ## Build & Run
 
 ```bash
