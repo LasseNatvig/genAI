@@ -246,7 +246,7 @@ static double print_statistics(const char *label,
     
     // Write to CSV file
     if (csv_file) {
-        fprintf(csv_file, "%s,%.0f,%.0f,%.0f,%.0f,%.2f,%.1f%%,%.6f,%.1f%%,%.1f%%,%.1f%%,%.1f%%\n",
+        fprintf(csv_file, "%s,%.0f,%.0f,%.0f,%.0f,%.2f,%.1f%%,%.6f,%.1f%%,%.1f%%,%.1f%%,%.1f%%,%.2f%%\n",
                 label,
                 cycles_avg, instrs_avg, crefs_avg, cmiss_avg,
                 ipc_avg, miss_avg, time_avg,
