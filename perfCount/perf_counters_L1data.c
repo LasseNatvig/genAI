@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <linux/perf_event.h>
 #include <stdint.h>
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,9 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+
+/* Number of experiments to run for averaging */
+const int noExp = 5;
 
 /* ------------------------------------------------------------------ */
 /* perf_event_open syscall wrapper                                    */
@@ -131,14 +135,14 @@ static void fmtcol(char *buf, size_t sz, int avail, uint64_t val) {
 }
 
 static void print_header(void) {
-    printf("\n%-26s %13s %13s %11s %11s   %s\n",
+    printf("\n%-20s %12s %12s %12s %12s   %s\n",
            "Workload",
-           "Cycles", "Instructions",
-           "CacheRefs", "CacheMiss",
+           "Mcycles", "Mins",
+           "Mcrefs", "Mcmiss",
            "Derived");
-    printf("%-26s %13s %13s %11s %11s   %s\n",
-           "--------------------------",
-           "-------------", "-------------",
+    printf("%-20s %12s %12s %12s %12s   %s\n",
+           "--------------------",
+           "-----------", "-----------",
            "-----------", "-----------",
            "--------------------------------------");
     /* Warn about any counters not available on this CPU */
@@ -147,52 +151,109 @@ static void print_header(void) {
             printf("  (note: '%s' not available on this CPU)\n", ctrs[i].name);
 }
 
-static void print_row(const char *fmt, double elapsed_time, ...) {
-    uint64_t cycles = ctrs[0].value;
-    uint64_t instrs = ctrs[1].value;
-    uint64_t crefs  = ctrs[2].value;
-    uint64_t cmiss  = ctrs[3].value;
+static void calculate_stats(uint64_t values[], int n, double *avg, double *rel_stddev) {
+    if (n <= 0) {
+        *avg = 0.0;
+        *rel_stddev = 0.0;
+        return;
+    }
+    
+    // Calculate average
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        sum += values[i];
+    }
+    *avg = sum / n;
+    
+    // Calculate standard deviation
+    double variance = 0.0;
+    for (int i = 0; i < n; i++) {
+        variance += (values[i] - *avg) * (values[i] - *avg);
+    }
+    variance /= n;
+    double stddev = sqrt(variance);
+    
+    // Calculate relative standard deviation
+    *rel_stddev = (*avg != 0.0) ? (stddev / *avg) * 100.0 : 0.0;
+}
 
-    char c0[16], c1[16], c2[16], c3[16];
-    fmtcol(c0, sizeof(c0), ctrs[0].avail, cycles);
-    fmtcol(c1, sizeof(c1), ctrs[1].avail, instrs);
-    fmtcol(c2, sizeof(c2), ctrs[2].avail, crefs);
-    fmtcol(c3, sizeof(c3), ctrs[3].avail, cmiss);
+static void calculate_stats_dbl(double values[], int n, double *avg, double *rel_stddev) {
+    if (n <= 0) {
+        *avg = 0.0;
+        *rel_stddev = 0.0;
+        return;
+    }
+    
+    // Calculate average
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        sum += values[i];
+    }
+    *avg = sum / n;
+    
+    // Calculate standard deviation
+    double variance = 0.0;
+    for (int i = 0; i < n; i++) {
+        variance += (values[i] - *avg) * (values[i] - *avg);
+    }
+    variance /= n;
+    double stddev = sqrt(variance);
+    
+    // Calculate relative standard deviation
+    *rel_stddev = (*avg != 0.0) ? (stddev / *avg) * 100.0 : 0.0;
+}
 
-    /* Derived metrics — only when both operands are available */
-    char ipc_s[16]   = "n/a";
-    char miss_s[16]  = "n/a";
-    if (ctrs[0].avail && ctrs[1].avail && cycles)
-        snprintf(ipc_s,   sizeof(ipc_s),   "%.2f",
-                 (double)instrs / (double)cycles);
-    if (ctrs[2].avail && ctrs[3].avail && crefs)
-        snprintf(miss_s,  sizeof(miss_s),  "%.1f%%",
-                 100.0 * (double)cmiss / (double)crefs);
-
-    /* Format the label with variable arguments */
-    char label[64];
-    va_list args;
-    va_start(args, elapsed_time);
-    vsnprintf(label, sizeof(label), fmt, args);
-    va_end(args);
-
-    printf("%-26s %13s %13s %11s %11s"
-           "   IPC=%-6s  miss=%-7s  time=%-10.6f\n",
-           label, c0, c1, c2, c3,
-           ipc_s, miss_s, elapsed_time);
+static double print_statistics(const char *label,
+                            uint64_t cycles[], uint64_t instrs[], 
+                            uint64_t crefs[], uint64_t cmiss[],
+                            double times[]) {
+    // Calculate statistics
+    double cycles_avg, instrs_avg, crefs_avg, cmiss_avg, time_avg;
+    double cycles_relstd, instrs_relstd, crefs_relstd, cmiss_relstd, time_relstd;
+    
+    calculate_stats(cycles, noExp, &cycles_avg, &cycles_relstd);
+    calculate_stats(instrs, noExp, &instrs_avg, &instrs_relstd);
+    calculate_stats(crefs, noExp, &crefs_avg, &crefs_relstd);
+    calculate_stats(cmiss, noExp, &cmiss_avg, &cmiss_relstd);
+    calculate_stats_dbl(times, noExp, &time_avg, &time_relstd);
+    
+    // Calculate derived metrics
+    double ipc_avg = (cycles_avg > 0) ? instrs_avg / cycles_avg : 0.0;
+    double miss_avg = (crefs_avg > 0) ? (cmiss_avg / crefs_avg) * 100.0 : 0.0;
+    
+    // Format values with averages and relative standard deviations in compact form
+    // Convert to millions for display
+    double cycles_M = cycles_avg / 1e6;
+    double instrs_M = instrs_avg / 1e6;
+    double crefs_M = crefs_avg / 1e6;
+    double cmiss_M = cmiss_avg / 1e6;
+    
+    char cycles_str[32], instrs_str[32], crefs_str[32], cmiss_str[32], time_str[32];
+    snprintf(cycles_str, sizeof(cycles_str), "%.1fM(%.1f%%)", cycles_M, cycles_relstd);
+    snprintf(instrs_str, sizeof(instrs_str), "%.1fM(%.1f%%)", instrs_M, instrs_relstd);
+    snprintf(crefs_str, sizeof(crefs_str), "%.1fM(%.1f%%)", crefs_M, crefs_relstd);
+    snprintf(cmiss_str, sizeof(cmiss_str), "%.1fM(%.1f%%)", cmiss_M, cmiss_relstd);
+    snprintf(time_str, sizeof(time_str), "%.3fs(%.1f%%)", time_avg, time_relstd);
+    
+    char ipc_str[16], miss_str[16];
+    snprintf(ipc_str, sizeof(ipc_str), "%.2f", ipc_avg);
+    snprintf(miss_str, sizeof(miss_str), "%.1f%%", miss_avg);
+    
+    // Print to console in compact form
+    printf("%-20s %12s %12s %12s %12s IPC=%-5s miss=%-5s %s\n",
+           label, cycles_str, instrs_str, crefs_str, cmiss_str,
+           ipc_str, miss_str, time_str);
     
     // Write to CSV file
     if (csv_file) {
-        fprintf(csv_file, "%s,%llu,%llu,%llu,%llu,%.2f,%.1f%% ,%.6f\n",
+        fprintf(csv_file, "%s,%.0f,%.0f,%.0f,%.0f,%.2f,%.1f%%,%.6f,%.1f%%,%.1f%%,%.1f%%,%.1f%%\n",
                 label,
-                (unsigned long long)cycles,
-                (unsigned long long)instrs,
-                (unsigned long long)crefs,
-                (unsigned long long)cmiss,
-                ctrs[0].avail && ctrs[1].avail && cycles ? (double)instrs / (double)cycles : 0.0,
-                ctrs[2].avail && ctrs[3].avail && crefs ? 100.0 * (double)cmiss / (double)crefs : 0.0,
-                elapsed_time);
+                cycles_avg, instrs_avg, crefs_avg, cmiss_avg,
+                ipc_avg, miss_avg, time_avg,
+                cycles_relstd, instrs_relstd, crefs_relstd, cmiss_relstd, time_relstd);
     }
+    
+    return time_avg;
 }
 
 /* Used as an output sink to prevent the compiler eliminating loops. */
@@ -230,75 +291,137 @@ int main(void) {
     }
     
     // Write CSV header
-    fprintf(csv_file, "Workload,Cycles,Instructions,CacheRefs,CacheMiss,IPC,Miss%%,Time(s)\n");
+    fprintf(csv_file, "Workload,Cycles,Instructions,CacheRefs,CacheMiss,IPC,Miss%%,Time(s),Cycles_RSD,Instrs_RSD,CacheRefs_RSD,CacheMiss_RSD,Time_RSD%%\n");
 
     // Initialize random seed
     srand(123);  // ensure that it always start on the same seed (reproducibility)
 
+    // Variables to track execution time for the last problem size (n=20000)
+    double time_insertion_20k = 0.0;
+    double time_bubble_20k = 0.0;
+    double time_quick_20k = 0.0;
+
     print_header();
 
-    // Test Insertion Sort for sizes 10000 to 20000 in steps of 2000
-    for (int n = 10000; n <= 20000; n += 2000) {
-        int *arr = malloc(n * sizeof(int));
-        if (!arr) {
-            fprintf(stderr, "Failed to allocate memory\n");
-            return 1;
+    // Test Insertion Sort for sizes 10000 to 20000 in steps of 1000
+    for (int n = 10000; n <= 20000; n += 1000) {
+        // Arrays to store results for averaging
+        uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
+        double times[noExp];
+        
+        for (int exp = 0; exp < noExp; exp++) {
+            int *arr = malloc(n * sizeof(int));
+            if (!arr) {
+                fprintf(stderr, "Failed to allocate memory\n");
+                return 1;
+            }
+            generate_random_array(arr, n);
+            
+            struct timespec start, end;
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            counters_start();
+            insertion_sort(arr, n);
+            counters_stop();
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            times[exp] = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            cycles[exp] = ctrs[0].value;
+            instrs[exp] = ctrs[1].value;
+            crefs[exp] = ctrs[2].value;
+            cmiss[exp] = ctrs[3].value;
+            free(arr);
         }
-        generate_random_array(arr, n);
         
-        struct timespec start, end;
-        clock_gettime(CLOCK_MONOTONIC, &start);
-        counters_start();
-        insertion_sort(arr, n);
-        counters_stop();
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        
-        double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-        print_row("Insertion Sort (n=%d)", elapsed, n);
-        free(arr);
+        char label[64];
+        snprintf(label, sizeof(label), "Insertion Sort (n=%d)", n);
+        double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
+        if (n == 20000) {
+            time_insertion_20k = avg_time;
+        }
     }
 
-    // Test Bubble Sort for sizes 10000 to 20000 in steps of 2000
-    for (int n = 10000; n <= 20000; n += 2000) {
-        int *arr = malloc(n * sizeof(int));
-        if (!arr) {
-            fprintf(stderr, "Failed to allocate memory\n");
-            return 1;
+    // Test Bubble Sort for sizes 10000 to 20000 in steps of 1000
+    for (int n = 10000; n <= 20000; n += 1000) {
+        // Arrays to store results for averaging
+        uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
+        double times[noExp];
+        
+        for (int exp = 0; exp < noExp; exp++) {
+            int *arr = malloc(n * sizeof(int));
+            if (!arr) {
+                fprintf(stderr, "Failed to allocate memory\n");
+                return 1;
+            }
+            generate_random_array(arr, n);
+            
+            struct timespec start, end;
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            counters_start();
+            bubble_sort(arr, n);
+            counters_stop();
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            times[exp] = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            cycles[exp] = ctrs[0].value;
+            instrs[exp] = ctrs[1].value;
+            crefs[exp] = ctrs[2].value;
+            cmiss[exp] = ctrs[3].value;
+            free(arr);
         }
-        generate_random_array(arr, n);
         
-        struct timespec start, end;
-        clock_gettime(CLOCK_MONOTONIC, &start);
-        counters_start();
-        bubble_sort(arr, n);
-        counters_stop();
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        
-        double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-        print_row("Bubble Sort (n=%d)", elapsed, n);
-        free(arr);
+        char label[64];
+        snprintf(label, sizeof(label), "Bubble Sort (n=%d)", n);
+        double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
+        if (n == 20000) {
+            time_bubble_20k = avg_time;
+        }
     }
 
-    // Test Quick Sort for sizes 10000 to 20000 in steps of 2000
-    for (int n = 10000; n <= 20000; n += 2000) {
-        int *arr = malloc(n * sizeof(int));
-        if (!arr) {
-            fprintf(stderr, "Failed to allocate memory\n");
-            return 1;
+    // Test Quick Sort for sizes 10000 to 20000 in steps of 1000
+    for (int n = 10000; n <= 20000; n += 1000) {
+        // Arrays to store results for averaging
+        uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
+        double times[noExp];
+        
+        for (int exp = 0; exp < noExp; exp++) {
+            int *arr = malloc(n * sizeof(int));
+            if (!arr) {
+                fprintf(stderr, "Failed to allocate memory\n");
+                return 1;
+            }
+            generate_random_array(arr, n);
+            
+            struct timespec start, end;
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            counters_start();
+            quicksort(arr, n);
+            counters_stop();
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            
+            times[exp] = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+            cycles[exp] = ctrs[0].value;
+            instrs[exp] = ctrs[1].value;
+            crefs[exp] = ctrs[2].value;
+            cmiss[exp] = ctrs[3].value;
+            free(arr);
         }
-        generate_random_array(arr, n);
         
-        struct timespec start, end;
-        clock_gettime(CLOCK_MONOTONIC, &start);
-        counters_start();
-        quicksort(arr, n);
-        counters_stop();
-        clock_gettime(CLOCK_MONOTONIC, &end);
-        
-        double elapsed = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
-        print_row("Quick Sort (n=%d)", elapsed, n);
-        free(arr);
+        char label[64];
+        snprintf(label, sizeof(label), "Quick Sort (n=%d)", n);
+        double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
+        if (n == 20000) {
+            time_quick_20k = avg_time;
+        }
     }
+
+    // Print summary of execution times for n=20000
+    printf("\n--- Average Execution Time for n=20000 (over %d experiments) ---\n", noExp);
+    printf("Insertion Sort:  %.3fs\n", time_insertion_20k);
+    printf("Bubble Sort:     %.3fs\n", time_bubble_20k);
+    printf("Quick Sort:      %.3fs\n", time_quick_20k);
+    
+    // Print CSV filename
+    printf("\nResults saved to: %s\n", csv_filename);
 
     // Close CSV file
     if (csv_file) {
