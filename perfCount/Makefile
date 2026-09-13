@@ -16,7 +16,7 @@ plot:
 	python3 plot_perf.py
 
 run:
-	./$(TARGET) 30000 3
+	./$(TARGET) 20000 1000 1000 3
 	@LATEST_CSV=$$(ls -t res/*.csv | head -1); \
 	 python3 plot_perf.py "$$LATEST_CSV"
 

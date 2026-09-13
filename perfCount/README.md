@@ -6,6 +6,8 @@ No external tools required — the syscall is part of the kernel.
 
 NOTE: Original file written by github copilot is saved in *initial.bac
 
+**measuring.md written by Cline** from this prompt in this folder: "write a clinerules file measuring.md that directs this way of measuring functions by several experiments E as argument, problem size N as argument (array size in this case), and reading and reporting of performance counters"
+
 
 ## Build & Run
 

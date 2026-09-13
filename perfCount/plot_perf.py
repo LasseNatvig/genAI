@@ -58,15 +58,21 @@ def plot_performance(csv_file):
     plt.figure(figsize=(10, 6))
     
     algorithms = df['Algorithm'].unique()
+    
+    # Define colors for each algorithm
+    colors = {'InsSort': 'blue', 'BubSort': 'red', 'QckSort': 'green'}
+    
     for algo in algorithms:
         algo_data = df[df['Algorithm'] == algo].copy()
         algo_data = algo_data.sort_values('Array Size')
+        
+        algo_color = colors.get(algo.strip(), 'black')
         
         # Extract Time_RSD% if available
         if 'Time_RSD%' in algo_data.columns:
             # Clean Time_RSD%: Remove % sign and convert to float
             time_rsd_raw = algo_data['Time_RSD%'].astype(str).str.rstrip('%').astype(float) / 100.0
-            time_values = algo_data['Time(s)']
+            time_values = algo_data['Time(s)'].values
             time_errors = time_values * time_rsd_raw  # Absolute error = Time(s) * (Time_RSD% / 100)
             
             # Plot with error bars
@@ -75,7 +81,8 @@ def plot_performance(csv_file):
                 time_values,
                 yerr=time_errors,
                 fmt='o',  # Scatter points
-                label=algo,
+                label=algo.strip(),
+                color=algo_color,
                 capsize=5,  # Size of error bar caps
                 elinewidth=1,  # Width of error bars
                 markersize=5  # Size of scatter points
@@ -85,16 +92,19 @@ def plot_performance(csv_file):
             plt.scatter(
                 algo_data['Array Size'],
                 algo_data['Time(s)'],
-                label=algo,
+                label=algo.strip(),
+                color=algo_color,
                 s=50  # Size of the scatter points
             )
         
-        # Connect points with a line for better visualization
+        # Connect points with a solid line with strong color
         plt.plot(
             algo_data['Array Size'],
             algo_data['Time(s)'],
-            alpha=0.3,  # Semi-transparent line
-            linestyle='--'  # Dashed line
+            color=algo_color,
+            alpha=0.8,  # Solid line
+            linestyle='-',  # Solid line
+            linewidth=1.5
         )
     
     plt.xlabel('Array Size (n)')
