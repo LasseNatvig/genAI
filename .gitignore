@@ -50,4 +50,10 @@ cachePerf/cache_performance_x_log.png
 cachePerf/win11/cache_demo.exe
 cachePerf/win11/cache_demo.obj
 genai2-test-take2/test
+genai2-cntd-1/test
 GenAI-1-tested-2026-08-13/test
+perfCount/perf_counters
+perfCount/.vscode/tasks.json
+perfCount/perf_counters_L1data
+perfCount/perf_counters
+perfCount/perf_counters
