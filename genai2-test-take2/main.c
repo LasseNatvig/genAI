@@ -1,4 +1,6 @@
 // main.c - Sorting algorithms benchmark with insertion sort, bubble sort, and quicksort
+
+// partly vibe coding, contains redundant code and more
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,7 +61,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Seed random number generator
-    srand(time(NULL));
+    srand(123); // always start at the same seed for reproducibility
 
     // Allocate memory for arrays
     int *original_array = (int *)malloc(N * sizeof(int));
