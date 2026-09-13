@@ -4,16 +4,17 @@ Demonstrates reading ARM Cortex-A72 PMU (Performance Monitoring Unit) hardware
 counters from user-space using the Linux `perf_event_open()` syscall.
 No external tools required — the syscall is part of the kernel.
 
-NOTE: Original file written by github copilot is saved in *initial.bac
-
-**measuring.md written by Cline** from this prompt in this folder: "write a clinerules file measuring.md that directs this way of measuring functions by several experiments E as argument, problem size N as argument (array size in this case), and reading and reporting of performance counters"
-
-
 ## Build & Run
 
 ```bash
 make
-./perf_counters
+./perf_counters max_array_size start_array_size step_size noExp
+```
+
+Example:
+```bash
+# Run with array sizes from 16 to 30000 in steps of 2000, 3 experiments
+./perf_counters 30000 16 2000 3
 ```
 
 If you see *Operation not permitted*:
@@ -22,10 +23,16 @@ If you see *Operation not permitted*:
 echo -1 | sudo tee /proc/sys/kernel/perf_event_paranoid
 ```
 
+Via Makefile:
+```bash
+# Uses: start=16, step=2000, max=30000, experiments=3
+make run
+```
+
 ## Counters
 
 The Cortex-A72 PMU provides 1 fixed cycle counter and 6 programmable event
-counters. This program opens all six standard `PERF_TYPE_HARDWARE` events:
+counters. This program uses these `PERF_TYPE_HARDWARE` events:
 
 | Counter | Description |
 |---|---|
@@ -33,28 +40,23 @@ counters. This program opens all six standard `PERF_TYPE_HARDWARE` events:
 | **Instructions** | Instructions retired |
 | **Cache Refs** | L1 data cache accesses (reads + writes) |
 | **Cache Misses** | L1 data cache misses that went to L2/RAM |
-| **Branches** | Branch instructions executed |
 | **Branch Misses** | Branches mispredicted by the branch predictor |
 
 Derived metrics printed per workload:
 
 - **IPC** (Instructions Per Cycle) — higher is better; drops when the CPU stalls waiting on memory.
-- **miss%** — cache miss rate (`Cache Misses / Cache Refs`); high values mean the working set exceeds the cache.
-- **brmiss%** — branch misprediction rate (`Branch Misses / Branches`); high values hurt the instruction pipeline.
+- **CacheMiss%** — cache miss rate (`Cache Misses / Cache Refs`); high values mean the working set exceeds the cache.
+- **BranchMissPerInstr** — branch misses per instruction (`Branch Misses / Instructions`).
 
 ## Workloads
 
-Four synthetic workloads are measured to contrast hardware behaviours:
+Three sorting algorithms are measured and compared:
 
-| Workload | What it demonstrates |
+| Workload | Description |
 |---|---|
-| **Sequential read** | Stride-1 array scan; the hardware prefetcher runs ahead of the CPU, so cache misses are near zero and IPC is high. |
-| **Strided read (stride=64)** | Accesses every 64th element (256-byte hops), defeating the prefetcher and causing frequent cache misses. IPC drops sharply. |
-| **Predictable branch** | `if (arr[i] >= 0)` is always true; the branch predictor learns the pattern immediately and mispredictions stay near zero. |
-| **Unpredictable branch** | `if (arr[i] & 1)` alternates true/false on consecutive elements; the branch predictor is wrong ~50% of the time. |
-
-The array contains 4 M `int` values (16 MB), which exceeds the 1 MB L2 cache
-of the Cortex-A72, ensuring the strided workload reliably spills to DRAM.
+| **Insertion Sort** | O(n²) algorithm, good for small or nearly-sorted arrays |
+| **Bubble Sort** | O(n²) algorithm, simple but inefficient for large arrays |
+| **Quick Sort** | O(n log n) average case, much faster for larger arrays |
 
 ## Hardware Notes
 
@@ -66,3 +68,28 @@ of the Cortex-A72, ensuring the strided workload reliably spills to DRAM.
 
 The program gracefully skips any counter that is not supported on the current
 CPU (e.g. when running inside a VM with a restricted PMU).
+
+## Output
+
+- Terminal: Formatted table with column headers and metrics
+- CSV file: `res/sorting_perf_<timestamp>.csv` with raw counter values
+- Plot: `plots/plot_sorting_perf_<timestamp>.png` with execution time vs array size
+
+Terminal values are displayed as:
+- Cycles, Instructions, CacheRefs: in millions (M)
+- CacheMiss, BranchMiss: in thousands (k)
+- IPC: ratio
+- CacheMiss%: percentage
+- BranchMissPerInstr: per-instruction rate (scientific notation)
+- Time: in seconds
+
+All values show: Average(RelativeStdDev%)
+
+## Files
+
+- `perf_counters_L1data.c`: Main program with performance counter logic and sorting benchmarks
+- `sorting.c`: Sorting algorithm implementations (insertion_sort, bubble_sort, quick_sort)
+- `Makefile`: Build system with run target
+- `plot_perf.py`: Python script for plotting CSV results with blue (Insertion Sort), red (Bubble Sort), green (Quick Sort) lines
+- `res/`: CSV output directory
+- `plots/`: Plot output directory

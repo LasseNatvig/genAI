@@ -1,1 +1,0 @@
-Workload,Cycles,Instructions,CacheRefs,CacheMiss,BranchMisses,IPC,CacheMiss%,BranchMissPerInstr,Time(s),Cycles_RSD,Instrs_RSD,CacheRefs_RSD,CacheMiss_RSD,BranchMisses_RSD,Time_RSD%
