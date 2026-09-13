@@ -120,19 +120,32 @@ The `make run` target:
 3. Runs `python3 plot_perf.py` on it
 4. Saves plot to `plots/plot_sorting_perf_<timestamp>.png`
 
+The `make plot` target:
+1. Runs `python3 plot_perf.py` on the latest CSV
+2. Saves plot to `plots/plot_sorting_perf_<timestamp>.png`
+3. **Opens an interactive matplotlib window** where you can zoom and pan
+
 Plot colors:
 - **Blue**: Insertion Sort
 - **Red**: Bubble Sort  
 - **Green**: Quick Sort
 
+**Note:** The matplotlib window might appear under other open windows. Check your taskbar/dock if you don't see it.
+
 ### Manual Plotting
 ```bash
-# Plot specific file
+# Plot specific file (opens interactive matplotlib window)
 python3 plot_perf.py res/sorting_perf_*.csv
 
-# Plot latest file
+# Plot latest file (opens interactive matplotlib window)
 python3 plot_perf.py res/sorting_perf_$(ls -t res/*.csv | head -1 | cut -d/ -f3)
 ```
+
+When `plot_perf.py` runs, it will:
+1. Save the plot as a PNG file to `plots/`
+2. Display an interactive matplotlib window
+3. Print instructions for zooming and panning
+4. Warn that the window might appear under other windows
 
 ---
 

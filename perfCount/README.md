@@ -27,6 +27,9 @@ Via Makefile:
 ```bash
 # Uses: start=16, step=2000, max=30000, experiments=3
 make run
+
+# Plot results with interactive matplotlib window
+make plot
 ```
 
 ## Counters
@@ -74,6 +77,7 @@ CPU (e.g. when running inside a VM with a restricted PMU).
 - Terminal: Formatted table with column headers and metrics
 - CSV file: `res/sorting_perf_<timestamp>.csv` with raw counter values
 - Plot: `plots/plot_sorting_perf_<timestamp>.png` with execution time vs array size
+- Interactive window: `make plot` opens a matplotlib window where you can zoom and pan
 
 Terminal values are displayed as:
 - Cycles, Instructions, CacheRefs: in millions (M)
@@ -84,6 +88,14 @@ Terminal values are displayed as:
 - Time: in seconds
 
 All values show: Average(RelativeStdDev%)
+
+### Interactive Plot
+Running `make plot` displays an interactive matplotlib window that allows:
+- Zooming in/out on specific regions
+- Panning to explore different parts of the plot
+- Hovering to see data points
+
+**Note:** The matplotlib window might appear under other open windows. Check your taskbar/dock if you don't see it.
 
 ## Files
 

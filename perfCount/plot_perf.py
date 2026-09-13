@@ -120,6 +120,11 @@ def plot_performance(csv_file):
     output_file = os.path.join(output_dir, f"plot_{os.path.basename(csv_file).replace('.csv', '.png')}")
     plt.savefig(output_file)
     print(f"\nPlot saved to: {output_file}")
+    
+    # Show the plot in a window
+    print("\nShowing matplotlib window - you can zoom and pan. Close the window when done.")
+    print("WARNING: The matplotlib window might appear under other windows. Check your taskbar/dock if you don't see it.")
+    plt.show()
     plt.close()
 
 
