@@ -1,48 +1,7 @@
-// functions.c - Loop and sorting functions for performance measurement
+// sorting.c - Sorting functions for performance measurement
 
 #include <stdint.h>
 #include <stdlib.h>
-
-// Used as an output sink to prevent the compiler from eliminating loops
-extern volatile uint64_t sink;
-
-// Loop with 1000 iterations
-void loop_1000(void) {
-    for (int i = 0; i < 1000; i++) {
-        int b = i;
-        b = b + 2;
-        b = b % 56;
-    }
-}
-
-// Loop with 1000 iterations (sink variant)
-void loop_1000_sink(void) {
-    for (int i = 0; i < 1000; i++) {
-        int b = i;
-        b = b + 2;
-        b = b % 56;
-        sink = b;
-    }
-}
-
-// Loop with 5000 iterations
-void loop_5000(void) {
-    for (int i = 0; i < 5000; i++) {
-        int b = i;
-        b = b + 2;
-        b = b % 56;
-    }
-}
-
-// Loop with 5000 iterations (sink variant)
-void loop_5000_sink(void) {
-    for (int i = 0; i < 5000; i++) {
-        int b = i;
-        b = b + 2;
-        b = b % 56;
-        sink = b;
-    }
-}
 
 // Insertion sort implementation
 void insertion_sort(int arr[], int n) {

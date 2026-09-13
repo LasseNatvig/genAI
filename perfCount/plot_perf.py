@@ -114,28 +114,42 @@ def plot_performance(csv_file):
 
 
 def main():
-    res_dir = "/home/lasse/code/genAI/perfCount/res"
-    csv_files = list_csv_files(res_dir)
+    import sys
     
-    if not csv_files:
-        print(f"No CSV files found in {res_dir}")
-        return
-    
-    print("Available CSV files:")
-    for i, csv_file in enumerate(csv_files, 1):
-        print(f"{i}. {os.path.basename(csv_file)}")
-    
-    # Ask user to pick a file
-    try:
-        choice = int(input(f"\nSelect a file (1-{len(csv_files)}): "))
-        if 1 <= choice <= len(csv_files):
-            selected_file = csv_files[choice - 1]
-            print(f"\nPlotting data from: {os.path.basename(selected_file)}")
-            plot_performance(selected_file)
+    # Check if a filename was provided as a command-line argument
+    if len(sys.argv) > 1:
+        # Use the provided filename
+        csv_file = sys.argv[1]
+        if os.path.exists(csv_file):
+            print(f"Plotting data from: {os.path.basename(csv_file)}")
+            plot_performance(csv_file)
         else:
-            print("Invalid choice. Exiting.")
-    except ValueError:
-        print("Invalid input. Please enter a number.")
+            print(f"File not found: {csv_file}")
+            return
+    else:
+        # Interactive mode - original behavior
+        res_dir = "/home/lasse/code/genAI/perfCount/res"
+        csv_files = list_csv_files(res_dir)
+        
+        if not csv_files:
+            print(f"No CSV files found in {res_dir}")
+            return
+        
+        print("Available CSV files:")
+        for i, csv_file in enumerate(csv_files, 1):
+            print(f"{i}. {os.path.basename(csv_file)}")
+        
+        # Ask user to pick a file
+        try:
+            choice = int(input(f"\nSelect a file (1-{len(csv_files)}): "))
+            if 1 <= choice <= len(csv_files):
+                selected_file = csv_files[choice - 1]
+                print(f"\nPlotting data from: {os.path.basename(selected_file)}")
+                plot_performance(selected_file)
+            else:
+                print("Invalid choice. Exiting.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 
 if __name__ == "__main__":

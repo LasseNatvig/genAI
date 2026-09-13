@@ -6,7 +6,7 @@ CFLAGS = -std=c11 -O2 -g -Wa,--noexecstack
 LDFLAGS = -lm
 TARGET = perf_counters
 
-$(TARGET): perf_counters_L1data.c functions.c
+$(TARGET): perf_counters_L1data.c sorting.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
@@ -15,4 +15,9 @@ clean:
 plot:
 	python3 plot_perf.py
 
-.PHONY: clean plot
+run:
+	./$(TARGET) 30000 3
+	@LATEST_CSV=$$(ls -t res/*.csv | head -1); \
+	 python3 plot_perf.py "$$LATEST_CSV"
+
+.PHONY: clean plot run

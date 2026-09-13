@@ -24,7 +24,7 @@
 #include <unistd.h>
 
 /* Number of experiments to run for averaging */
-const int noExp = 5;
+int noExp = 5;
 
 /* ------------------------------------------------------------------ */
 /* perf_event_open syscall wrapper                                    */
@@ -265,8 +265,18 @@ void insertion_sort(int arr[], int n);
 void bubble_sort(int arr[], int n);
 void quicksort(int arr[], int n);
 
-int main(void) {
+int main(int argc, char *argv[]) {
     printf("ARM Cortex-A72 PMU Demo - Sorting Performance\n");
+
+    // Parse command line arguments
+    int max_array_size = 20000;
+    if (argc >= 2) {
+        max_array_size = atoi(argv[1]);
+    }
+    if (argc >= 3) {
+        noExp = atoi(argv[2]);
+    }
+    printf("Running with max array size: %d, experiments: %d\n", max_array_size, noExp);
 
     if (init_counters() != 0)
         return 1;
@@ -296,15 +306,15 @@ int main(void) {
     // Initialize random seed
     srand(123);  // ensure that it always start on the same seed (reproducibility)
 
-    // Variables to track execution time for the last problem size (n=20000)
-    double time_insertion_20k = 0.0;
-    double time_bubble_20k = 0.0;
-    double time_quick_20k = 0.0;
+    // Variables to track execution time for the max problem size
+    double time_insertion_max = 0.0;
+    double time_bubble_max = 0.0;
+    double time_quick_max = 0.0;
 
     print_header();
 
-    // Test Insertion Sort for sizes 10000 to 20000 in steps of 1000
-    for (int n = 10000; n <= 20000; n += 1000) {
+    // Test Insertion Sort for sizes 10000 to max_array_size in steps of 1000
+    for (int n = 10000; n <= max_array_size; n += 1000) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
         double times[noExp];
@@ -335,13 +345,13 @@ int main(void) {
         char label[64];
         snprintf(label, sizeof(label), "Insertion Sort (n=%d)", n);
         double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
-        if (n == 20000) {
-            time_insertion_20k = avg_time;
+        if (n == max_array_size) {
+            time_insertion_max = avg_time;
         }
     }
 
-    // Test Bubble Sort for sizes 10000 to 20000 in steps of 1000
-    for (int n = 10000; n <= 20000; n += 1000) {
+    // Test Bubble Sort for sizes 10000 to max_array_size in steps of 1000
+    for (int n = 10000; n <= max_array_size; n += 1000) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
         double times[noExp];
@@ -372,13 +382,13 @@ int main(void) {
         char label[64];
         snprintf(label, sizeof(label), "Bubble Sort (n=%d)", n);
         double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
-        if (n == 20000) {
-            time_bubble_20k = avg_time;
+        if (n == max_array_size) {
+            time_bubble_max = avg_time;
         }
     }
 
-    // Test Quick Sort for sizes 10000 to 20000 in steps of 1000
-    for (int n = 10000; n <= 20000; n += 1000) {
+    // Test Quick Sort for sizes 10000 to max_array_size in steps of 1000
+    for (int n = 10000; n <= max_array_size; n += 1000) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
         double times[noExp];
@@ -409,16 +419,16 @@ int main(void) {
         char label[64];
         snprintf(label, sizeof(label), "Quick Sort (n=%d)", n);
         double avg_time = print_statistics(label, cycles, instrs, crefs, cmiss, times);
-        if (n == 20000) {
-            time_quick_20k = avg_time;
+        if (n == max_array_size) {
+            time_quick_max = avg_time;
         }
     }
 
-    // Print summary of execution times for n=20000
-    printf("\n--- Average Execution Time for n=20000 (over %d experiments) ---\n", noExp);
-    printf("Insertion Sort:  %.3fs\n", time_insertion_20k);
-    printf("Bubble Sort:     %.3fs\n", time_bubble_20k);
-    printf("Quick Sort:      %.3fs\n", time_quick_20k);
+    // Print summary of execution times for max array size
+    printf("\n--- Average Execution Time for n=%d (over %d experiments) ---\n", max_array_size, noExp);
+    printf("Insertion Sort:  %.3fs\n", time_insertion_max);
+    printf("Bubble Sort:     %.3fs\n", time_bubble_max);
+    printf("Quick Sort:      %.3fs\n", time_quick_max);
     
     // Print CSV filename
     printf("\nResults saved to: %s\n", csv_filename);
