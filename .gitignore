@@ -52,9 +52,14 @@ cachePerf/win11/cache_demo.obj
 genai2-test-take2/test
 genai2-cntd-1/test
 GenAI-1-tested-2026-08-13/test
+# Performance counter binaries
 perfCount/perf_counters
-perfCount/.vscode/tasks.json
 perfCount/perf_counters_L1data
-perfCount/perf_counters
-perfCount/perf_counters
-perfCount/perf_counters
+
+# Performance measurement results
+perfCount/plots/
+perfCount/res/
+perfCount/*.png
+perfCount/*.bac
+perfCount/.vscode/tasks.json
+perfCount/tat -e cycles,instructions,cache-misses,branch-misses sleep 1
