@@ -54,11 +54,6 @@ def plot_performance(csv_file):
         print(f"Error: 'Time(s)' column not found in {csv_file}")
         return
     
-    # Count number of experiments per algorithm
-    algo_experiments = {}
-    for algo in df['Algorithm'].unique():
-        algo_experiments[algo.strip()] = len(df[df['Algorithm'] == algo])
-    
     # Plot each algorithm separately with scatter points and error bars for Time_RSD%
     plt.figure(figsize=(10, 6))
     
@@ -66,9 +61,6 @@ def plot_performance(csv_file):
     
     # Define colors for each algorithm
     colors = {'InsSort': 'blue', 'BubSort': 'red', 'QckSort': 'green'}
-    
-    # Build experiments string for title
-    experiments_str = ", ".join([f"{algo}={count}" for algo, count in sorted(algo_experiments.items())])
     
     for algo in algorithms:
         algo_data = df[df['Algorithm'] == algo].copy()
@@ -117,7 +109,7 @@ def plot_performance(csv_file):
     
     plt.xlabel('Array Size (n)')
     plt.ylabel('Average Execution Time (s)')
-    plt.title(f'Performance: Average Execution Time vs. Array Size\n({os.path.basename(csv_file)})\nNo of experiments: {experiments_str}')
+    plt.title(f'Performance: Average Execution Time vs. Array Size\n({os.path.basename(csv_file)})')
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.legend()
     plt.tight_layout()

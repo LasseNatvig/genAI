@@ -1,0 +1,73 @@
+
+List of pre-defined events (to be used in -e or -M):
+
+  branch-misses                                      [Hardware event]
+  bus-cycles                                         [Hardware event]
+  cache-misses                                       [Hardware event]
+  cache-references                                   [Hardware event]
+  cpu-cycles OR cycles                               [Hardware event]
+  instructions                                       [Hardware event]
+  alignment-faults                                   [Software event]
+  bpf-output                                         [Software event]
+  cgroup-switches                                    [Software event]
+  context-switches OR cs                             [Software event]
+  cpu-clock                                          [Software event]
+  cpu-migrations OR migrations                       [Software event]
+  dummy                                              [Software event]
+  emulation-faults                                   [Software event]
+  major-faults                                       [Software event]
+  minor-faults                                       [Software event]
+  page-faults OR faults                              [Software event]
+  task-clock                                         [Software event]
+
+tool:
+  duration_time
+  user_time
+  system_time
+
+cache:
+  L1-dcache-loads OR armv8_cortex_a72/L1-dcache-loads/
+  L1-dcache-load-misses OR armv8_cortex_a72/L1-dcache-load-misses/
+  L1-dcache-stores OR armv8_cortex_a72/L1-dcache-stores/
+  L1-dcache-store-misses OR armv8_cortex_a72/L1-dcache-store-misses/
+  L1-icache-loads OR armv8_cortex_a72/L1-icache-loads/
+  L1-icache-load-misses OR armv8_cortex_a72/L1-icache-load-misses/
+  dTLB-load-misses OR armv8_cortex_a72/dTLB-load-misses/
+  dTLB-store-misses OR armv8_cortex_a72/dTLB-store-misses/
+  iTLB-load-misses OR armv8_cortex_a72/iTLB-load-misses/
+  branch-loads OR armv8_cortex_a72/branch-loads/
+  branch-load-misses OR armv8_cortex_a72/branch-load-misses/
+  node-loads OR armv8_cortex_a72/node-loads/
+  node-stores OR armv8_cortex_a72/node-stores/
+  br_mis_pred OR armv8_cortex_a72/br_mis_pred/       [Kernel PMU event]
+  br_pred OR armv8_cortex_a72/br_pred/               [Kernel PMU event]
+  bus_access OR armv8_cortex_a72/bus_access/         [Kernel PMU event]
+  bus_cycles OR armv8_cortex_a72/bus_cycles/         [Kernel PMU event]
+  cid_write_retired OR armv8_cortex_a72/cid_write_retired/[Kernel PMU event]
+  cpu_cycles OR armv8_cortex_a72/cpu_cycles/         [Kernel PMU event]
+  exc_return OR armv8_cortex_a72/exc_return/         [Kernel PMU event]
+  exc_taken OR armv8_cortex_a72/exc_taken/           [Kernel PMU event]
+  inst_retired OR armv8_cortex_a72/inst_retired/     [Kernel PMU event]
+  inst_spec OR armv8_cortex_a72/inst_spec/           [Kernel PMU event]
+  l1d_cache OR armv8_cortex_a72/l1d_cache/           [Kernel PMU event]
+  l1d_cache_refill OR armv8_cortex_a72/l1d_cache_refill/[Kernel PMU event]
+  l1d_cache_wb OR armv8_cortex_a72/l1d_cache_wb/     [Kernel PMU event]
+  l1d_tlb_refill OR armv8_cortex_a72/l1d_tlb_refill/ [Kernel PMU event]
+  l1i_cache OR armv8_cortex_a72/l1i_cache/           [Kernel PMU event]
+  l1i_cache_refill OR armv8_cortex_a72/l1i_cache_refill/[Kernel PMU event]
+  l1i_tlb_refill OR armv8_cortex_a72/l1i_tlb_refill/ [Kernel PMU event]
+  l2d_cache OR armv8_cortex_a72/l2d_cache/           [Kernel PMU event]
+  l2d_cache_refill OR armv8_cortex_a72/l2d_cache_refill/[Kernel PMU event]
+  l2d_cache_wb OR armv8_cortex_a72/l2d_cache_wb/     [Kernel PMU event]
+  mem_access OR armv8_cortex_a72/mem_access/         [Kernel PMU event]
+  memory_error OR armv8_cortex_a72/memory_error/     [Kernel PMU event]
+  ttbr_write_retired OR armv8_cortex_a72/ttbr_write_retired/[Kernel PMU event]
+  rNNN                                               [Raw event descriptor]
+  armv8_cortex/threshold_count,event=0..0xffff,long,.../modifier[Raw event descriptor]
+       [(see 'man perf-list' or 'man perf-record' on how to encode
+        it)]
+  breakpoint//modifier                               [Raw event descriptor]
+  kprobe/retprobe/modifier                           [Raw event descriptor]
+  software//modifier                                 [Raw event descriptor]
+  tracepoint//modifier                               [Raw event descriptor]
+  mem:<addr>[/len][:access]                          [Hardware breakpoint]

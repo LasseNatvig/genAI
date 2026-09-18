@@ -248,7 +248,7 @@ static double print_statistics(const char *label,
     
     // Write to CSV file
     if (csv_file) {
-        fprintf(csv_file, "%s,%.0f,%.0f,%.0f,%.0f,%.0f,%.2f,%.1f%%,%.1e,%.6f,%.1f%%,%.1f%%,%.1f%%,%.1f%%,%.2f%%, %.2f%%\n",
+        fprintf(csv_file, "%s,%.0f,%.0f,%.0f,%.0f,%.0f,%.2f,%.1f%%,%.1e,%.6f,%.1f%%,%.1f%%,%.1f%%,%.1f%%,%.2f%%\n",
                 label,
                 cycles_avg, instrs_avg, crefs_avg, cmiss_avg, bmisses_avg,
                 ipc_avg, miss_avg, bmiss_per_instr, time_avg,
@@ -270,8 +270,7 @@ void quicksort(int arr[], int n);
 int main(int argc, char *argv[]) {
     printf("ARM Cortex-A72 PMU Demo - Sorting Performance\n");
 
-
-    // Parse command line arguments, default values
+    // Parse command line arguments
     int max_array_size = 20000;
     int start_array_size = 10000;
     int step_size = 1000;
@@ -316,6 +315,9 @@ int main(int argc, char *argv[]) {
     // Write CSV header
     fprintf(csv_file, "Workload,Cycles,Instructions,CacheRefs,CacheMiss,BranchMisses,IPC,CacheMiss%%,BranchMissPerInstr,Time(s),Cycles_RSD,Instrs_RSD,CacheRefs_RSD,CacheMiss_RSD,BranchMisses_RSD,Time_RSD%%\n");
 
+    // Initialize random seed
+    srand(123);  // ensure that it always start on the same seed (reproducibility)
+
     // Variables to track execution time for the max problem size
     double time_insertion_max = 0.0;
     double time_bubble_max = 0.0;
@@ -348,8 +350,7 @@ int main(int argc, char *argv[]) {
            "Workload", "Cycles", "Instructions", "CacheRefs", "CacheMiss", "BranchMiss", "Metrics");
 
     // Test Insertion Sort for sizes start_array_size to max_array_size in steps of step_size
-    // Initialize random seed
-    srand(123);  // ensure that it always start on the same seed (reproducibility)
+    
     for (int n = start_array_size; n <= max_array_size; n += step_size) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
@@ -390,8 +391,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Test Bubble Sort for sizes start_array_size to max_array_size in steps of step_size
-    // Initialize random seed
-    srand(123);  // ensure that it always start on the same seed (reproducibility)
     for (int n = start_array_size; n <= max_array_size; n += step_size) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
@@ -432,8 +431,6 @@ int main(int argc, char *argv[]) {
     }
 
     // Test Quick Sort for sizes start_array_size to max_array_size in steps of step_size
-    // Initialize random seed
-    srand(123);  // ensure that it always start on the same seed (reproducibility)
     for (int n = start_array_size; n <= max_array_size; n += step_size) {
         // Arrays to store results for averaging
         uint64_t cycles[noExp], instrs[noExp], crefs[noExp], cmiss[noExp];
